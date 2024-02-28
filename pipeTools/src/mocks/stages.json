@@ -1,0 +1,91 @@
+{
+    "stages": [
+        {
+            "name": "Pre-Processing",
+            "programs": [
+                {
+                    "name": "Program1",
+                    "flag": "flag1",
+                    "inputfiles": [
+                        "input1.txt",
+                        "input2.txt"
+                    ],
+                    "outputfiles": [
+                        "output1.txt",
+                        "output2.txt"
+                    ]
+                },
+                {
+                    "name": "Program2",
+                    "flag": "flag2",
+                    "inputfiles": [
+                        "input3.txt"
+                    ],
+                    "outputfiles": [
+                        "output3.txt"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Assembly",
+            "programs": [
+                {
+                    "name": "Program3",
+                    "flag": "flag3",
+                    "inputfiles": [
+                        "input4.txt"
+                    ],
+                    "outputfiles": [
+                        "output4.txt"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Quality-Assessment",
+            "programs": [
+                {
+                    "name": "Program4",
+                    "flag": "flag4",
+                    "inputfiles": [
+                        "input5.txt"
+                    ],
+                    "outputfiles": [
+                        "output5.txt"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Annotation",
+            "programs": [
+                {
+                    "name": "Program5",
+                    "flag": "flag5",
+                    "inputfiles": [
+                        "input6.txt"
+                    ],
+                    "outputfiles": [
+                        "output6.txt"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "ARG-Identifier",
+            "programs": [
+                {
+                    "name": "Program6",
+                    "flag": "flag6",
+                    "inputfiles": [
+                        "input7.txt"
+                    ],
+                    "outputfiles": [
+                        "output7.txt"
+                    ]
+                }
+            ]
+        }
+    ]
+}

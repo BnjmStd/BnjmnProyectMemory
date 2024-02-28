@@ -1,0 +1,9 @@
+.container-stages {
+    padding: 50px;
+    display: flex;
+    flex-flow: column nowrap;
+    margin: 0 auto;
+    max-width: 800px;
+    text-align: center;
+    background: red;
+}
