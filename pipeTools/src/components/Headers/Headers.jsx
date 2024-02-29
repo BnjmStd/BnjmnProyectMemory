@@ -1,22 +1,20 @@
 import './Headers.css'
 
+import { TrashIcon, InfoIcon, UpdateFileIcon } from '../../Icons/Icons'
+
 const Headers = () => {
 
     return (
-        <div className='container'>
-            <input type = 'checkbox' id = 'toggle' hidden />
-            <label htmlFor='toggle' className='button'  ></label>
+        <>
 
-
-            <nav className='nav'>
-                <ul>
-                    <a 
-                        target='_blank'>Add Document</a>
-                </ul>
-            </nav>
-
+        <div className="icon-bar">
+            <a className="active" > <UpdateFileIcon /> </a>
+            <a > <TrashIcon/> </a>
+            <a > <InfoIcon/> </a>
         </div>
-    );
+        
+        </>
+        )
 }
 
 export default Headers

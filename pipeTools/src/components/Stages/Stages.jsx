@@ -14,7 +14,7 @@ const Stages = () => {
         <div className='container-stages'>
             {
                 stages.map((step, index) => (
-                    <h1 key={index}>{step.name}</h1>
+                    <div className='item-stages' key={index}>{step.name}</div>
             ))}
         </div>
 
