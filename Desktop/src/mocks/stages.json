@@ -4,8 +4,8 @@
             "name": "Pre-Processing",
             "programs": [
                 {
-                    "name": "Program1",
-                    "flag": "flag1",
+                    "tool": "fastqc",
+                    "flags": ["--flag1", "--flag2"],
                     "inputfiles": [
                         "input1.txt",
                         "input2.txt"
@@ -16,8 +16,8 @@
                     ]
                 },
                 {
-                    "name": "Program2",
-                    "flag": "flag2",
+                    "tool": "trimmomatic",
+                    "flags": ["--flag3"],
                     "inputfiles": [
                         "input3.txt"
                     ],
@@ -31,8 +31,8 @@
             "name": "Assembly",
             "programs": [
                 {
-                    "name": "Program3",
-                    "flag": "flag3",
+                    "tool": "binpacker",
+                    "flags": ["--flag4"],
                     "inputfiles": [
                         "input4.txt"
                     ],
@@ -46,23 +46,18 @@
             "name": "Quality-Assessment",
             "programs": [
                 {
-                    "name": "Program4",
-                    "flag": "flag4",
+                    "tool": "bowtie2",
+                    "flags": ["--flag5"],
                     "inputfiles": [
                         "input5.txt"
                     ],
                     "outputfiles": [
                         "output5.txt"
                     ]
-                }
-            ]
-        },
-        {
-            "name": "Annotation",
-            "programs": [
+                },
                 {
-                    "name": "Program5",
-                    "flag": "flag5",
+                    "tool": "samtools",
+                    "flags": ["--flag6"],
                     "inputfiles": [
                         "input6.txt"
                     ],
@@ -73,16 +68,31 @@
             ]
         },
         {
-            "name": "ARG-Identifier",
+            "name": "Annotation",
             "programs": [
                 {
-                    "name": "Program6",
-                    "flag": "flag6",
+                    "tool": "Program5",
+                    "flags": ["--flag7"],
                     "inputfiles": [
                         "input7.txt"
                     ],
                     "outputfiles": [
                         "output7.txt"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "ARG-Identifier",
+            "programs": [
+                {
+                    "tool": "Program6",
+                    "flags": ["--flag8"],
+                    "inputfiles": [
+                        "input8.txt"
+                    ],
+                    "outputfiles": [
+                        "output8.txt"
                     ]
                 }
             ]

@@ -1,6 +1,6 @@
 import './Headers.css'
 
-import { TrashIcon, InfoIcon, UpdateFileIcon } from '../../Icons/Icons'
+import { TrashIcon, InfoIcon, UpdateFileIcon } from '../Icons/Icons'
 
 const Headers = () => {
 

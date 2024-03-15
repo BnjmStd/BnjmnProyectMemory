@@ -17,5 +17,11 @@
     padding: 5px;
     display: flex;
     place-items: center;
-    box-shadow: 8px 15px 0px 0px rgba(0,0,0,0.75);
+    box-shadow: 8px 10px 0px 0px rgba(0,0,0,0.75);
+}
+
+.item-stages:hover {
+    background: #00d1b2;
+    color: #fff;
+    scale: 1.1;
 }
