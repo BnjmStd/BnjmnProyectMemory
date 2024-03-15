@@ -1,0 +1,9 @@
+version: '3'
+
+services:
+  pipeline:
+    build:
+      context: .
+      dockerfile: ./config/Dockerfile-
+    volumes:
+      - ${PWD}:/workspace

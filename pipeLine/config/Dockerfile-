@@ -1,0 +1,19 @@
+FROM ubuntu:latest
+
+# Instalar dependencias necesarias
+RUN apt-get update && \
+    apt-get install -y openjdk-11-jre-headless curl unzip && \
+    rm -rf /var/lib/apt/lists/*
+
+# Descargar e instalar Nextflow
+RUN curl -s https://get.nextflow.io | bash && \
+    mv nextflow /usr/local/bin && \
+    chmod +x /usr/local/bin/nextflow
+
+# Instalar Trimmomatic
+RUN apt-get update && \
+    apt-get install -y trimmomatic && \
+    rm -rf /var/lib/apt/lists/*
+
+# Establecer el directorio de trabajo
+WORKDIR /workspace
