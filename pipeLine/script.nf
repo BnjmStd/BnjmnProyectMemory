@@ -1,82 +1,35 @@
 #!/usr/bin/env nextflow
 
-params.files = null
-params.PREPROCESSING = false
+/* params */
+params.files = null   
 
-// docker compose -f docker-compose.yml run pipeline /bin/bash
+/* process */ 
+include { TRIMMO_SE } from './src/process/preprocessing.nf'
+include { UNZIPFILE } from './src/process/decompress.nf'
 
-def validate_file() {
-    ext = file(params.files).extension ?: 'No tiene extensión'
-    isCompressed = ext in ['gz', 'zip', 'tar', 'bz2']
+/* services */
+include { check_file } from './src/services/check_files_exist.nf'
+include { validate_file } from './src/services/validate_file_extension.nf'
 
-    if (isCompressed) {
-        params.flag = true
-        params.extension = ext
-    } else {
-        println "El archivo no está comprimido"
-        // to do: Hacer validación.
-    }
-}
-
-params.files ? (
-    params.files instanceof String ? (
-        file(params.files).exists() ? (
-            validate_file() 
-        ) : (
-            error 'El archivo especificado no existe'
-        )
-    ) : (
-        error 'El parámetro no es una cadena'
-    )
-) : (
-    error 'Ingrese el parámetro --files'
-)
-
-process UNZIPFILE {
-    input:
-
-    file inputFile
-    
-    output:
-
-    path "${inputFile.baseName}"
-
-    script:
-
-    """
-    gunzip -c $inputFile > ${inputFile.baseName}
-    """
-}
-
-// java -jar /usr/share/java/trimmomatic-0.39.jar
-process PREPROCESSING {
-
-    input:
-    file k_fastq 
-
-    script:
-    """    
-    java -jar /usr/share/java/trimmomatic-0.39.jar SE -phred33 SRR27371487.fastq platano_trimmed.fastq ILLUMINACLIP:/usr/share/trimmomatic/TruSeq3-SE.fa:2:30:10
-    """
-
-    output:
-    file("platano_trimmed.fastq")
-
-}
-
+/* run docker compose -f docker-compose.yml run pipeline /bin/bash */
 workflow {
-    if (params.flag) {
-        if (params.extension == 'gz') {
-            result = UNZIPFILE(file(params.files))
-            PREPROCESSING(result)
-        } else {
-            error 'Formato no válido. Se espera una extensión .gz.'
+    if (!check_file(params.files)) {
+        throw new Error("Oops .. something went wrong uwu")
+    }
+    
+    // file exist
+
+    if (validate_file(params.files)['flag'][0] == true){
+        if (validate_file(params.files)['ext'][0] == 'gz')
+            UNZIPFILE(file(params.files))
+        else {
+            println ('formato de compresión no soportado')
         }
     } else {
-        println "Aquí pasará algo cuando no esté comprimido."
+        // no compress
+        println ('partir flujo sin descomprimir.')
     }
 }
-
 
 workflow.onComplete {
     log.info ( workflow.success ? (
