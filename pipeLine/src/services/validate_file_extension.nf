@@ -1,12 +1,11 @@
-// valida la extensión y compresión del archivo.
 def validate_file(files) {
-    def ext = file(files).extension ?: 'No tiene extensión'
-    def isCompressed = ext in ['gz', 'zip', 'tar', 'bz2']
+    def ext = file(files).extension ?: 'No tiene'
+    def validExtensions = ['gz', 'fasta']
 
-    if (isCompressed) {
-        return [flag: true, ext: ext] as Tuple
+    if (ext in validExtensions) {
+        return true
     } else {
-        println "El archivo no está comprimido"
-        return [flag: false, ext: ext] as Tuple
+        throw new Error("Error: La extensión del archivo no es válida")
+        return false
     }
 }

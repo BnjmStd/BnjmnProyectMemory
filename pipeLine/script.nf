@@ -1,7 +1,8 @@
 #!/usr/bin/env nextflow
 
 /* params */
-params.files = null   
+params.files = null
+params.trimmomatic = null
 
 /* process */ 
 include { TRIMMO_SE } from './src/process/preprocessing.nf'
@@ -11,25 +12,24 @@ include { UNZIPFILE } from './src/process/decompress.nf'
 include { check_file } from './src/services/check_files_exist.nf'
 include { validate_file } from './src/services/validate_file_extension.nf'
 
-/* run docker compose -f docker-compose.yml run pipeline /bin/bash */
-workflow {
-    if (!check_file(params.files)) {
-        throw new Error("Oops .. something went wrong uwu")
-    }
-    
-    // file exist
+/* run: docker compose -f docker-compose.yml run pipeline /bin/bash */
 
-    if (validate_file(params.files)['flag'][0] == true){
-        if (validate_file(params.files)['ext'][0] == 'gz')
-            UNZIPFILE(file(params.files))
-        else {
-            println ('formato de compresión no soportado')
-        }
-    } else {
-        // no compress
-        println ('partir flujo sin descomprimir.')
-    }
+def filesList = params.files.split().collect { file(it) }
+filesList.each { x -> 
+    check_file(x) 
+    validate_file(x)
 }
+
+
+workflow {
+    Channel
+        .from(filesList)
+        .set { filesChannel }
+
+    resultado_unCompress = UNZIPFILE(filesChannel)
+    resultado_unCompress.view()
+}
+
 
 workflow.onComplete {
     log.info ( workflow.success ? (
