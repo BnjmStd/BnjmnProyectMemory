@@ -12,7 +12,7 @@ def check_file(files) {
                 throw new IllegalArgumentException('El parámetro no es una cadena')
             }
         } else {
-            throw new IllegalArgumentException('Ingrese el parámetro --files')
+            throw new IllegalArgumentException('No existe')
         }
     } catch (FileNotFoundException e) {
         throw new Error("${e.message}")
