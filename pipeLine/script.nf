@@ -14,27 +14,11 @@ include { check_directory } from './src/services/check_path_exist.nf'
 
 /* run: docker compose -f docker-compose.yml run pipeline /bin/bash */
 
-/*
-check_directory(params.path)
-
-def archivos = file(params.path).listFiles()
-
-def archivosComprimidosGz = archivos.findAll { archivo ->
-    archivo.name.endsWith('.fq.gz') || 
-    archivo.name.endsWith('.fastq.gz')
-}
-
-def archivosNoComprimidos = archivos.findAll { archivo ->
-    archivo.name.endsWith('.fastq') || 
-    archivo.name.endsWith('.fq')
-}
-*/
-
-
 workflow {
     check_directory(params.path)
 
     def archivos = file(params.path).listFiles()
+    
     Channel.of(archivos)
         .branch { archivo ->
             con_gz: archivo.name.endsWith('.gz')
@@ -47,13 +31,13 @@ workflow {
 
     files = finalChannel.mix(result.fastq)
     
-    num =   files.count().view()
+    num = files.count().view()
 
     if (params.trimmo) {
         
         if (params.trimmo == 'SE') {
             uwu = TRIMMO_SE(files)
-            uwu.subscribe { println it } // Mueve la suscripción aquí si es necesario
+            uwu.subscribe { println it }
         } else if (params.trimmo == 'PE') {
             if (num % 2 == 0) {
                 print ('soy par')
@@ -66,7 +50,6 @@ workflow {
         }
     }
 }
-
 
 workflow.onComplete {
     log.info ( workflow.success ? (
