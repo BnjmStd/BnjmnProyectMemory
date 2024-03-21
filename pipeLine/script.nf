@@ -30,25 +30,20 @@ workflow {
     finalChannel = UNZIPFILE(result.con_gz)
 
     files = finalChannel.mix(result.fastq)
-    
-    num = files.count().view()
-
     if (params.trimmo) {
-        
+        files.count().view()
         if (params.trimmo == 'SE') {
             uwu = TRIMMO_SE(files)
             uwu.subscribe { println it }
-        } else if (params.trimmo == 'PE') {
-            if (num % 2 == 0) {
-                print ('soy par')
-            }
-            else {
-                throw new Error('La cantidad de archivos no facilita la creación de librerias')
-            }
+
+        } else if (params.trimmo == 'PE' && (0 == 0)) {
+            println 'uwu'
         } else {
-            throw new Error('El valor del parámetro "trimmo" debe ser "SE" o "PE"')
+            throw new Error('El valor del parámetro "trimmo" debe ser "SE" o "PE"\n' +
+                            'La cantidad de archivos no facilita la creación de librerias')
         }
     }
+
 }
 
 workflow.onComplete {
