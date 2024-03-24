@@ -1,4 +1,3 @@
-
 def countFiles(path) {
     def directorio = new File(path)
     def archivosQueCumplenCriterio = directorio.listFiles().findAll { archivo ->

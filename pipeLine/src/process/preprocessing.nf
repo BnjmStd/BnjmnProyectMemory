@@ -1,6 +1,4 @@
 // java -jar /usr/share/java/trimmomatic-0.39.jar
-
-
 process TRIMMO_PE {
     input:
     tuple path(forward_fastq), path(reverse_fastq)
@@ -45,9 +43,16 @@ process TRIMMO_SE {
     """
 }
 
-// java -jar /usr/share/java/trimmomatic-0.39.jar SE -phred33 $k_fastq $k_fastq.baseName ILLUMINACLIP:/usr/share/trimmomatic/TruSeq3-SE.fa:2:30:10
-
-
-
-
-
+process FASTQC {
+    input:
+    path inputFile
+    
+    output:
+    path "fastqc_${inputFile.baseName}_logs"
+    
+    script:
+    """
+    mkdir fastqc_${inputFile.baseName}_logs
+    fastqc -o fastqc_${inputFile.baseName}_logs -f fastq -q $inputFile
+    """
+}

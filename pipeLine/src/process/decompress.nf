@@ -1,5 +1,4 @@
 process UNZIPFILE {
-
     input:
     path file
 
@@ -17,13 +16,3 @@ process UNZIPFILE {
     gunzip -c "\$archivo" > "\$nombre_base"
     """
 }
-
-
-
-
-
-
-
-
-
-

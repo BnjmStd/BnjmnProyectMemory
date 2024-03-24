@@ -3,18 +3,28 @@
 /* params */
 params.trimmo = null
 params.path = null
+params.fastqc = null
+params.spades = null
 
-/* params trimmomatic PE */
+/* params trimmomatic  */
 params.threads = 1
 params.phred = '-phred33'
 params.trimlog = 'trim.log'
 params.summary = 'stats_summary.txt'
 params.illuminaAdapter = '/usr/share/trimmomatic/TruSeq3-SE.fa:2:30:10 '
 
+/* params SPAdes */
+
+
+
+
+
 /* process */ 
 include { TRIMMO_PE } from './src/process/preprocessing.nf'
 include { TRIMMO_SE } from './src/process/preprocessing.nf'
 include { UNZIPFILE } from './src/process/decompress.nf'
+include { FASTQC } from './src/process/preprocessing.nf'
+include { SPADES } from './src/process/assembly.nf'
 
 /* services */
 include { check_file } from './src/services/check_files_exist.nf'
@@ -43,6 +53,11 @@ workflow {
 
     files = finalChannel.mix(result.fastq)
 
+    if (params.fastqc) {
+        FASTQC(files)
+        .view { "result: ${it}" }
+    }
+
     if (params.trimmo) {
         files
         if (params.trimmo.toLowerCase() == 'se' ||  params.trimmo.toLowerCase() == 'pe') {
@@ -50,7 +65,7 @@ workflow {
             // files.count().set { countFiles }
 
             if (cantidadArchivos % 2 == 0 && params.trimmo.toLowerCase() == 'pe') {
-                files.groupTuple(size: 2).set { 2blefile } // error
+                files.groupTuple(2).set { 2blefile } // error
                 TRIMMO_PE(2blefile, params.threads, params.phred, params.trimlog, params.summary, params.illuminaAdapter)
 
             } else if (cantidadArchivos % 2 != 0 && params.trimmo.toLowerCase() == 'pe') {
@@ -68,6 +83,10 @@ workflow {
         } else {
             throw new Error('El valor del parámetro "trimmo" debe ser "SE" o "PE"\n')
         }
+    }
+
+    if (params.spades) {
+
     }
 
 }
