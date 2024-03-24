@@ -1,1 +1,0 @@
-# Proyecto Memoria de título
