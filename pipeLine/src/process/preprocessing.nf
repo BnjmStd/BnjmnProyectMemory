@@ -9,16 +9,16 @@ process TRIMMO_PE {
     val illuminaAdapter
 
     output:
-    file 'output_forward_paired.fastq'
-    file 'output_forward_unpaired.fastq'
-    file 'output_reverse_paired.fastq'
-    file 'output_reverse_unpaired.fastq'
+    file "${forward_fastq.baseName}_output_forward_paired.fastq"
+    file "${forward_fastq.baseName}_output_forward_unpaired.fastq"
+    file "${reverse_fastq.baseName}_output_reverse_paired.fastq"
+    file "${reverse_fastq.baseName}_output_reverse_unpaired.fastq"
 
     script:
     """
     java -jar /usr/share/java/trimmomatic-0.39.jar PE $phred -threads $threads -trimlog $trimlog -summary $summary $forward_fastq $reverse_fastq \\
-        output_forward_paired.fastq output_forward_unpaired.fastq \\
-        output_reverse_paired.fastq output_reverse_unpaired.fastq \\
+        ${forward_fastq.baseName}_output_forward_paired.fastq ${forward_fastq.baseName}_output_forward_unpaired.fastq \\
+        ${reverse_fastq.baseName}_output_reverse_paired.fastq ${reverse_fastq.baseName}_output_reverse_unpaired.fastq \\
         ILLUMINACLIP:$illuminaAdapter
     """
 }
@@ -33,13 +33,11 @@ process TRIMMO_SE {
     val illuminaAdapter 
 
     output:
-    file "${k_fastq.baseName}"
+    file "${k_fastq.baseName}_log.fastq"
 
     script:
     """    
-    
-    java -jar /usr/share/java/trimmomatic-0.39.jar SE $phred -threads $threads -trimlog $trimlog -summary $summary $k_fastq $k_fastq.baseName ILLUMINACLIP:$illuminaAdapter
-    
+    java -jar /usr/share/java/trimmomatic-0.39.jar SE $phred -threads $threads -trimlog $trimlog -summary $summary $k_fastq ${k_fastq.baseName}_log.fastq ILLUMINACLIP:$illuminaAdapter
     """
 }
 

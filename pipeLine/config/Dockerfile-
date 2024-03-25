@@ -7,7 +7,11 @@ RUN apt-get update && \
     curl \
     unzip \
     trimmomatic \
-    fastqc && \
+    fastqc \
+    wget \
+    spades \
+    python3 \
+    build-essential && \
     rm -rf /var/lib/apt/lists/*
 
 # Descargar e instalar Nextflow
@@ -17,3 +21,4 @@ RUN curl -s https://get.nextflow.io | bash && \
 
 # Establecer el directorio de trabajo
 WORKDIR /workspace
+

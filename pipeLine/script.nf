@@ -6,6 +6,9 @@ params.path = null
 params.fastqc = null
 params.spades = null
 
+params.bowtie = null
+params.bwa = null
+
 /* params trimmomatic  */
 params.threads = 1
 params.phred = '-phred33'
@@ -14,10 +17,6 @@ params.summary = 'stats_summary.txt'
 params.illuminaAdapter = '/usr/share/trimmomatic/TruSeq3-SE.fa:2:30:10 '
 
 /* params SPAdes */
-
-
-
-
 
 /* process */ 
 include { TRIMMO_PE } from './src/process/preprocessing.nf'
@@ -53,40 +52,40 @@ workflow {
 
     files = finalChannel.mix(result.fastq)
 
-    if (params.fastqc) {
+    if (params.fastqc && params.trimmo == null && params.spades == null ) {
         FASTQC(files)
         .view { "result: ${it}" }
+    } else if (params.fastqc && params.trimmo != null || params.fastqc && params.spades != null){
+        throw new Error ('Sólo se puede ejecutar Fastqc')
     }
 
     if (params.trimmo) {
         files
         if (params.trimmo.toLowerCase() == 'se' ||  params.trimmo.toLowerCase() == 'pe') {
-            
             // files.count().set { countFiles }
-
             if (cantidadArchivos % 2 == 0 && params.trimmo.toLowerCase() == 'pe') {
-                files.groupTuple(2).set { 2blefile } // error
-                TRIMMO_PE(2blefile, params.threads, params.phred, params.trimlog, params.summary, params.illuminaAdapter)
-
+                trimmo_result = TRIMMO_PE(files.collectFile(sort: true).collate(2), params.threads, params.phred, params.trimlog, params.summary, params.illuminaAdapter)
             } else if (cantidadArchivos % 2 != 0 && params.trimmo.toLowerCase() == 'pe') {
                 throw new Error('La cantidad de archivos no facilita la creación de librerias')
 
             } else if (cantidadArchivos % 2 != 0 && params.trimmo.toLowerCase() == 'se') {
-                TRIMMO_SE(files, params.threads, params.phred, params.trimlog, params.summary, params.illuminaAdapter) // Generar SE impar
+                trimmo_result = TRIMMO_SE(files, params.threads, params.phred, params.trimlog, params.summary, params.illuminaAdapter) // Generar SE impar
                 
             } else if (cantidadArchivos % 2 == 0 && params.trimmo.toLowerCase() == 'se') {
-                TRIMMO_SE(files, params.threads, params.phred, params.trimlog, params.summary, params.illuminaAdapter)
+                trimmo_result = TRIMMO_SE(files, params.threads, params.phred, params.trimlog, params.summary, params.illuminaAdapter)
             } else {
                 throw new Error('Something went wrong')
             }
-
         } else {
             throw new Error('El valor del parámetro "trimmo" debe ser "SE" o "PE"\n')
         }
     }
 
     if (params.spades) {
-
+        if (params.trimmo.toLowerCase() == 'se' ||  params.trimmo.toLowerCase() == 'pe') {
+            SPADES(trimmo_result.collect())
+            .view { "result: ${ it }" }
+        }
     }
 
 }
@@ -99,4 +98,4 @@ workflow.onComplete {
             ) 
         )
 }
-// fastq trimmo spades -> llamado de variante, análisis de ARG
+// llamado de variante, análisis de ARG
