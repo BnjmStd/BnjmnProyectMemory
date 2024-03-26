@@ -19,6 +19,13 @@ RUN curl -s https://get.nextflow.io | bash && \
     mv nextflow /usr/local/bin && \
     chmod +x /usr/local/bin/nextflow
 
+# Instalar SRA Toolkit
+RUN wget "http://ftp-trace.ncbi.nlm.nih.gov/sra/sdk/current/sratoolkit.current-ubuntu64.tar.gz" && \
+    tar -zxvf sratoolkit.current-ubuntu64.tar.gz && \
+    rm sratoolkit.current-ubuntu64.tar.gz && \
+    mv sratoolkit.* /usr/local/bin/sratoolkit && \
+    mv /usr/local/bin/sratoolkit/bin/* /usr/local/bin/
+
 # Establecer el directorio de trabajo
 WORKDIR /workspace
 

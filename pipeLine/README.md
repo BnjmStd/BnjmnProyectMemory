@@ -13,6 +13,9 @@ Este repositorio contiene un pipeline de análisis de datos desarrollado con Nex
 
 nextflow run main.nf --input <archivo_entrada> --param1 <valor1> --param2 <valor2>
 
+/* run: docker compose -f docker-compose.yml run pipeline /bin/bash */
+
+
 ## Parámetro 
 
 ## Estructura del proyecto
