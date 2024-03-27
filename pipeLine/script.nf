@@ -9,6 +9,7 @@ params.spades = null
 /* params sra toolkit */
 params.id_sra = null
 params.pairs = null 
+params.x = 1000
 
 /* params trimmomatic  */
 params.threads = 1
@@ -27,7 +28,7 @@ include { TRIMMO_PE as TRIMMO_FASTQ_PE } from './src/process/preprocessing.nf'
 include { TRIMMO_SE as TRIMMO_FASTQ_SE } from './src/process/preprocessing.nf'
 include { UNZIPFILE } from './src/process/decompress.nf'
 include { FASTQC } from './src/process/preprocessing.nf'
-include { FASTQC_2 } from './src/process/preprocessing.nf' // cambiar
+include { FASTQC_2 } from './src/process/preprocessing.nf'
 include { SPADES_SE } from './src/process/assembly.nf'
 include { SPADES_PE } from './src/process/assembly.nf'
 include { SRA_TOOLKIT_PAIRS } from './src/process/get_sra.nf'
@@ -55,9 +56,14 @@ workflow {
     
     } else if (cantidadArchivos == 0 && params.id_sra != null) {
         
-        validateSRAId(params.id_sra)
-        SRA_TOOLKIT(params.path, params.id_sra)
-        .view{ it }
+        validateSRAId(params.id_sra)    
+        if (params.pairs) {
+            SRA_TOOLKIT_PAIRS(params.path, params.id_sra, params.x)
+            .view { "Tus fq están aqui: ${it}" }
+        } else {
+            SRA_TOOLKIT(params.path, params.id_sra, params.x)
+            .view { "Tu fq está aqui: ${it}" }
+        }
 
     }
 
@@ -81,16 +87,25 @@ workflow {
     
     } else if (params.fastqc && params.trimmo != null && params.fastqc && params.spades != null){
         throw new Error ('Sólo se puede ejecutar Fastqc')
-    } else if (params.fastqc && params.trimmo.toLowerCase() == 'se' ||  params.trimmo.toLowerCase() == 'pe' && flag == true) {
-        FASTQC(files)
-        .view { "result 1er Fastq: ${it}" }
-        if (params.trimmo.toLowerCase() == 'pe') {
-            trimmo_result = TRIMMO_FASTQ_PE(files.collectFile().collate(2), params.threads, params.phred, params.trimlog, params.summary, params.illuminaAdapter)
-        } else if (params.trimmo.toLowerCase() == 'se') {
-            trimmo_result = TRIMMO_FASTQ_SE(files, params.threads, params.phred, params.trimlog, params.summary, params.illuminaAdapter)
+    } else if (params.fastqc != null && params.trimmo != null && flag == true) {
+
+        if (params.trimmo.toLowerCase() =='se' || params.trimmo.toLowerCase() =='pe'  ) {
+            
+            FASTQC(files)
+            .view { "result 1er Fastq: ${it}" }
+            if (params.trimmo.toLowerCase() == 'pe') {
+                trimmo_result = TRIMMO_FASTQ_PE(files.collectFile().collate(2), params.threads, params.phred, params.trimlog, params.summary, params.illuminaAdapter)
+            } else if (params.trimmo.toLowerCase() == 'se') {
+                trimmo_result = TRIMMO_FASTQ_SE(files, params.threads, params.phred, params.trimlog, params.summary, params.illuminaAdapter)
+            }
+            FASTQC_2(trimmo_result.flatten())
+            .view { "result 2do Fastq: ${it}"}
+
+        } else {
+            throw new Error ('Params.trimmo not valid ')
         }
-        FASTQC_2(trimmo_result.flatten())
-        .view { "result 2do Fastq: ${it}"}
+
+
     }
 
     if (params.trimmo && flag == false) {
@@ -124,13 +139,17 @@ workflow {
     if (params.spades) {
         archivos_separados
         if (params.trimmo.toLowerCase() == 'se' ||  params.trimmo.toLowerCase() == 'pe') {
+            
             if (params.trimmo.toLowerCase() == 'pe') {
                 forw = archivos_separados.forward.map { it -> it.text }.collectFile(name: 'forward.fastq', newLine: true)
                 revers = archivos_separados.reverse.map { it -> it.text }.collectFile(name: 'reverse.fastq', newLine: true)
+                
                 SPADES_PE(forw, revers, params.phred_offset)
 
             } else if (params.trimmo.toLowerCase() == 'se') {
-                // SPADES_SE(trimmo_result.collect(), params.phred_offset)
+                unpaired = trimmo_result.map { it -> it.text }.collectFile(name: 'unpaired.fastq', newLine: true)
+                
+                SPADES_SE(unpaired, params.phred_offset)
             } else {
                 throw new Error ('something went wrong')
             }

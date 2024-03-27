@@ -9,7 +9,7 @@ process SPADES_SE {
     script:
     """
 
-    spades.py --careful -o output_spades -s $index $phred
+    spades.py  -o output_spades -s $index $phred
     
     """
 }
