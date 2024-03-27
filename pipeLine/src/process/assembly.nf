@@ -16,15 +16,15 @@ process SPADES_SE {
 
 process SPADES_PE {
     input:
-    path index
-
+    path forward_reads
+    path reverse_reads
+    val phred_offset
 
     output:
     path "output_spades"
 
     script:
     """
-    spades.py -o output_spades --12 $index 
-    
+    spades.py -o output_spades -1 ${forward_reads} -2 ${reverse_reads} $phred_offset
     """
 }

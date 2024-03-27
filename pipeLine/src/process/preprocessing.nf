@@ -9,10 +9,7 @@ process TRIMMO_PE {
     val illuminaAdapter
 
     output:
-    file "${forward_fastq.baseName}_output_forward_paired.fastq"
-    file "${forward_fastq.baseName}_output_forward_unpaired.fastq"
-    file "${reverse_fastq.baseName}_output_reverse_paired.fastq"
-    file "${reverse_fastq.baseName}_output_reverse_unpaired.fastq"
+    tuple path("${forward_fastq.baseName}_output_forward.fastq"), path("${reverse_fastq.baseName}_output_reverse.fastq")
 
     script:
     """
@@ -20,6 +17,9 @@ process TRIMMO_PE {
         ${forward_fastq.baseName}_output_forward_paired.fastq ${forward_fastq.baseName}_output_forward_unpaired.fastq \\
         ${reverse_fastq.baseName}_output_reverse_paired.fastq ${reverse_fastq.baseName}_output_reverse_unpaired.fastq \\
         ILLUMINACLIP:$illuminaAdapter
+
+    cat ${forward_fastq.baseName}_output_forward_paired.fastq ${forward_fastq.baseName}_output_forward_unpaired.fastq > ${forward_fastq.baseName}_output_forward.fastq
+    cat ${reverse_fastq.baseName}_output_reverse_paired.fastq ${reverse_fastq.baseName}_output_reverse_unpaired.fastq > ${reverse_fastq.baseName}_output_reverse.fastq
     """
 }
 
@@ -42,6 +42,19 @@ process TRIMMO_SE {
 }
 
 process FASTQC {
+    input:
+    path inputFile
+    
+    output:
+    path "fastqc_${inputFile.baseName}_logs"
+    
+    script:
+    """
+    mkdir fastqc_${inputFile.baseName}_logs
+    fastqc -o fastqc_${inputFile.baseName}_logs -f fastq -q $inputFile
+    """
+}
+process FASTQC_2 {
     input:
     path inputFile
     

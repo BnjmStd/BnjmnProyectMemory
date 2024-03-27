@@ -5,11 +5,14 @@ process SRA_TOOLKIT_PAIRS {
     
     script:
     """
-    
+    fastq-dump -X 1000000 --split-files SRR390728
     """
 }
+// fastq
 
 process SRA_TOOLKIT {
+    publishDir params.path, mode:'copy'
+    
     input:
     val pathy
     val id_sra
@@ -19,6 +22,6 @@ process SRA_TOOLKIT {
 
     script:
     """
-    fastq-dump -O $pathy $id_sra
+    fastq-dump -O $pathy  -I $id_sra
     """
 }
