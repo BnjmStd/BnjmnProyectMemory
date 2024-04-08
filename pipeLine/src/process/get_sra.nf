@@ -1,36 +1,31 @@
-process SRA_TOOLKIT_PAIRS {
-    
+process SRA_TOOLKIT_PAIRS { 
     publishDir params.path, mode:'copy'
     
     input:
-    path dic
     val srr
     val number
 
     output:
-    path dic
-    script:
+    tuple path("${srr}_1.fastq"), path("${srr}_2.fastq")
     
+    script:
     """
-    fastq-dump -X $number --split-files $srr -o $dic
+    fastq-dump -X $number --split-files $srr
     """
 }
-// fastq
 
 process SRA_TOOLKIT {
     publishDir params.path, mode:'copy'
-    
+
     input:
-    path dic
     val srr
     val number
 
-
     output:
-    path dic
+    path "${srr}.fastq"
 
     script:
     """
-    fastq-dump -I $srr -X $number -O $dic
+    fastq-dump -I $srr -X $number 
     """
 }
