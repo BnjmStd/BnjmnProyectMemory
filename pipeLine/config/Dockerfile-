@@ -14,6 +14,9 @@ RUN apt-get update && \
     build-essential && \
     rm -rf /var/lib/apt/lists/*
 
+# Python
+ENV PYTHON=/usr/bin/python3
+
 # Descargar e instalar Nextflow
 RUN curl -s https://get.nextflow.io | bash && \
     mv nextflow /usr/local/bin && \
@@ -25,6 +28,36 @@ RUN wget "http://ftp-trace.ncbi.nlm.nih.gov/sra/sdk/current/sratoolkit.current-u
     rm sratoolkit.current-ubuntu64.tar.gz && \
     mv sratoolkit.* /usr/local/bin/sratoolkit && \
     mv /usr/local/bin/sratoolkit/bin/* /usr/local/bin/
+
+# Instalar Bowtie2 manualmente
+RUN wget -O /tmp/bowtie2.tar.gz https://github.com/BenLangmead/bowtie2/releases/download/v2.4.4/bowtie2-2.4.4-linux-x86_64.zip && \
+    unzip /tmp/bowtie2.tar.gz -d /usr/local/bin && \
+    rm /tmp/bowtie2.tar.gz
+
+    # Agregar directorio de Bowtie2 al PATH
+ENV PATH="/usr/local/bin/bowtie2-2.4.4-linux-x86_64:${PATH}"
+
+# Descargar e instalar GATK
+RUN wget "https://github.com/broadinstitute/gatk/releases/download/4.2.0.0/gatk-4.2.0.0.zip" && \
+    unzip gatk-4.2.0.0.zip && \
+    mv gatk-4.2.0.0 /usr/local/bin/gatk && \
+    chmod +x /usr/local/bin/gatk/gatk && \
+    rm gatk-4.2.0.0.zip && \
+    ln -s /usr/bin/python3 /usr/bin/python
+
+# Agregar directorio de GATK al PATH
+ENV PATH="/usr/local/bin/gatk:${PATH}"
+
+# Instalar Kraken2 manualmente
+RUN wget -O /tmp/kraken2.tar.gz https://github.com/DerrickWood/kraken2/archive/refs/tags/v2.1.2.tar.gz && \
+    tar -zxvf /tmp/kraken2.tar.gz -C /usr/local/bin && \
+    rm /tmp/kraken2.tar.gz && \
+    cd /usr/local/bin/kraken2-2.1.2 && \
+    ./install_kraken2.sh /usr/local/bin
+
+# Agregar directorio de Kraken2 al PATH
+ENV PATH="/usr/local/bin/kraken2-2.1.2:${PATH}"
+
 
 # Establecer el directorio de trabajo
 WORKDIR /workspace

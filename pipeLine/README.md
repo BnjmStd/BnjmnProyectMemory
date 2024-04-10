@@ -23,3 +23,11 @@ nextflow run main.nf --input <archivo_entrada> --param1 <valor1> --param2 <valor
 ## Contribuir
 
 ## Licencia 
+
+scaffolds.fasta: Este archivo contiene las secuencias de los scaffolds generados por SPAdes, que representan las secuencias contiguas ensambladas a partir de las lecturas de secuencia original. Puedes utilizar este archivo como referencia para alinear las lecturas originales y realizar el llamado de variantes.
+
+contigs.fasta: Similar a scaffolds.fasta, este archivo contiene las secuencias de los contigs ensamblados por SPAdes. Aunque los contigs son secuencias más cortas que los scaffolds, aún pueden ser útiles para el llamado de variantes, especialmente si deseas centrarte en las regiones más conservadas del genoma.
+
+assembly_graph.fastg: Este archivo contiene la representación gráfica del ensamblaje generado por SPAdes en el formato FASTG. Puede ser útil para visualizar el ensamblaje y comprender la estructura de los contigs y scaffolds.
+
+Indexar el genoma de referencia es necesario para mejorar la eficiencia del alineamiento. Cuando indexas el genoma de referencia, Bowtie2 crea estructuras de datos optimizadas que le permiten buscar rápidamente regiones similares en el genoma durante el proceso de alineamiento. Esto es especialmente importante cuando estás alineando grandes cantidades de secuencias contra un genoma de referencia extenso.
