@@ -39,26 +39,37 @@ process INDEX_GENOME_SAMTOOLS {
     """
 }
 
-process ONE_DIRECTORY {
+process DICT_SAMTOOLS {
     input:
-    path fai_file
-    path fasta_file
+    path genRef
 
     output:
-    path "reference_files"
+    path "${genRef.baseName}.dict"
 
     script:
     """
-    mkdir -p reference_files
-    cp $fasta_file reference_files/
-    cp $fai_file reference_files/
+    samtools dict $genRef > ${genRef.baseName}.dict
+    """
+}
+
+process SAM_TO_BAM {
+    input:
+    path sam
+    
+    output:
+    path "output.bam"
+
+    script:
+    """
+    samtools view -bS $sam > output.bam
     """
 }
 
 process VARIANT_CALLING {
     input:
-    path one
-    path genRef
+    path fasta_file
+    path fai_file
+    path dict_file
     path aligned_reads
 
     output:
@@ -66,6 +77,6 @@ process VARIANT_CALLING {
     
     script:
     """
-    gatk --java-options "-Xmx4g" HaplotypeCaller -R $one/$genRef -D $one -I $aligned_reads -O variants.vcf
+    gatk --java-options "-Xmx4g" HaplotypeCaller -R $fasta_file -I $aligned_reads -O variants.vcf 
     """
 }

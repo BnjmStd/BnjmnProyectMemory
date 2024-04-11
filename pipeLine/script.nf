@@ -5,28 +5,26 @@ params.trimmo = null
 params.path = null
 params.fastqc = null
 params.spades = null
-
 /* params sra toolkit */
 params.id_sra = null
 params.pairs = null 
 params.x = 1000
-
 /* params trimmomatic  */
 params.threads = 1
 params.phred = '-phred33'
 params.trimlog = 'trim.log'
 params.summary = 'stats_summary.txt'
 params.illuminaAdapter = '/usr/share/trimmomatic/TruSeq3-SE.fa:2:30:10'
-
 /* params SPAdes */
 params.phred_offset = ''
-
 /* params Llamado de variante */
 params.variantCall = null
 params.variantRef = null
+/* params para kraken2 */
+params.kraken = null
+params.db = null
 
 /* process */ 
-
 /* Evaluación de calidad */
 include { TRIMMO_PE } from './src/process/preprocessing.nf'
 include { TRIMMO_SE } from './src/process/preprocessing.nf'
@@ -39,8 +37,10 @@ include { INDEXGENOME } from './src/process/variantCall.nf'
 include { ALINEAMIENTO } from './src/process/variantCall.nf'
 include { VARIANT_CALLING } from './src/process/variantCall.nf'
 include { INDEX_GENOME_SAMTOOLS } from './src/process/variantCall.nf'
-include { ONE_DIRECTORY } from './src/process/variantCall.nf'
+include { DICT_SAMTOOLS } from './src/process/variantCall.nf'
+include { SAM_TO_BAM } from './src/process/variantCall.nf'
 /* Identificación Taxonómica */
+include { KRAKEN2 } from './src/process/Taxonomy.nf'
 
 /* Services */
 include { check_file } from './src/services/check_files_exist.nf'
@@ -178,24 +178,40 @@ workflow {
             spades_result /* need it */
 
             result_alineamiento = ALINEAMIENTO(index, spades_result)
-
             /* luego esto lo mando al gatk para el variant calling
                 necesito el genoma ref, y el sam del alineamiento
                 para que GATK funcione necesito generar el file .fai
             */
-
             result_FAI = INDEX_GENOME_SAMTOOLS(file(params.variantRef))
-            one = ONE_DIRECTORY(result_FAI, file(params.variantRef))
-            resultVariantCalling = VARIANT_CALLING(one, file(params.variantRef) ,result_alineamiento)
+            result_Dict = DICT_SAMTOOLS(file(params.variantRef))
+            /* El resultado del alineamiento me entrega un sam y al parecer GATK solo acepta BAM*/
+            bam_alineamiento =  SAM_TO_BAM(result_alineamiento)
+            resultVariantCalling = VARIANT_CALLING(file(params.variantRef), result_FAI ,result_Dict, bam_alineamiento)
             resultVariantCalling.view { it }
 
         } else {
             throw new Error (' Ingrese un genoma de ref ')
         }
     }
+
+    /* identificación taxonómica */
+
+    if ((params.kraken != null) && (params.spades != null) && (flag == false)){
+
+        /* proceso de kraken */
+        spades_result
+        /* valido el path de la db*/
+        check_directory(file(params.db))
+
+        /* TO DO: TENGO UN PROBLEMA CON LA RUTA, HAY QUE ENTREGARLE UNA ABSOLUTA*/
+        KRAKEN2(params.db, spades_result)
+
+
+    }
 }
 
-/* identificación taxonómica */
+
+
 
 workflow.onComplete {
     log.info ( workflow.success ? ("\nDone!\n") : ("Oops ..") )

@@ -58,6 +58,22 @@ RUN wget -O /tmp/kraken2.tar.gz https://github.com/DerrickWood/kraken2/archive/r
 # Agregar directorio de Kraken2 al PATH
 ENV PATH="/usr/local/bin/kraken2-2.1.2:${PATH}"
 
+# Descargar AMRFinder y descomprimirlo
+RUN mkdir amrfinder \
+    && cd amrfinder \
+    && URL=$(curl -s https://api.github.com/repos/ncbi/amr/releases/latest | grep "browser_download_url.*amrfinder_binaries" | cut -d '"' -f 4) \
+    && curl -sOL "$URL" \
+    && tar xvfz $(basename $URL) \
+    && rm $(basename $URL) 
+
+# Mover el ejecutable amrfinder a un directorio incluido en PATH
+RUN mv /amrfinder/amrfinder /usr/local/bin/
+
+# Agregar el directorio de amrfinder al PATH
+ENV PATH="/amrfinder:${PATH}"
+
+# Ejecutar el comando para descargar la base de datos
+# RUN amrfinder -u
 
 # Establecer el directorio de trabajo
 WORKDIR /workspace
