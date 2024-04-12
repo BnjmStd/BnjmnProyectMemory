@@ -58,23 +58,35 @@ RUN wget -O /tmp/kraken2.tar.gz https://github.com/DerrickWood/kraken2/archive/r
 # Agregar directorio de Kraken2 al PATH
 ENV PATH="/usr/local/bin/kraken2-2.1.2:${PATH}"
 
+# Instalar BLAST y HMMER
+RUN apt-get update && \
+    apt-get install -y ncbi-blast+ && \
+    wget http://eddylab.org/software/hmmer/hmmer.tar.gz && \
+    tar zxf hmmer.tar.gz && \
+    cd hmmer-3.4 && \
+    ./configure --prefix /usr/local && \
+    make && \
+    make check && \
+    make install && \
+    (cd easel; make install) && \
+    rm -rf hmmer.tar.gz hmmer-3.4
+
 # Descargar AMRFinder y descomprimirlo
-RUN mkdir amrfinder \
-    && cd amrfinder \
-    && URL=$(curl -s https://api.github.com/repos/ncbi/amr/releases/latest | grep "browser_download_url.*amrfinder_binaries" | cut -d '"' -f 4) \
-    && curl -sOL "$URL" \
-    && tar xvfz $(basename $URL) \
-    && rm $(basename $URL) 
+RUN mkdir -p /usr/local/bin/data/latest && \
+    mkdir /amrfinder && \
+    chmod +x /amrfinder && \
+    cd /amrfinder && \
+    URL=$(curl -s https://api.github.com/repos/ncbi/amr/releases/latest | grep "browser_download_url.*amrfinder_binaries" | cut -d '"' -f 4) && \
+    curl -sOL "$URL" && \
+    tar xvfz $(basename $URL) && \
+    rm $(basename $URL)
 
-# Mover el ejecutable amrfinder a un directorio incluido en PATH
-RUN mv /amrfinder/amrfinder /usr/local/bin/
+# Descargar la base de datos de AMRFinder
+RUN /amrfinder/amrfinder -u
 
-# Agregar el directorio de amrfinder al PATH
-ENV PATH="/amrfinder:${PATH}"
-
-# Ejecutar el comando para descargar la base de datos
-# RUN amrfinder -u
+# Mover el ejecutable amrfinder a un directorio incluido en PATH y actualizar el PATH
+RUN mv /amrfinder/amrfinder /usr/local/bin/ && \
+    export PATH="/usr/local/bin:/amrfinder:${PATH}"
 
 # Establecer el directorio de trabajo
 WORKDIR /workspace
-

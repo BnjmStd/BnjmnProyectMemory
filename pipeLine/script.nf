@@ -23,6 +23,8 @@ params.variantRef = null
 /* params para kraken2 */
 params.kraken = null
 params.db = null
+/* armfinder */
+params.armFinder = null
 
 /* process */ 
 /* Evaluación de calidad */
@@ -177,7 +179,7 @@ workflow {
 
             spades_result /* need it */
 
-            result_alineamiento = ALINEAMIENTO(index, spades_result)
+            result_alineamiento = ALINEAMIENTO(index, spades_result) 
             /* luego esto lo mando al gatk para el variant calling
                 necesito el genoma ref, y el sam del alineamiento
                 para que GATK funcione necesito generar el file .fai
@@ -197,7 +199,6 @@ workflow {
     /* identificación taxonómica */
 
     if ((params.kraken != null) && (params.spades != null) && (flag == false)){
-
         /* proceso de kraken */
         spades_result
         /* valido el path de la db*/
@@ -205,13 +206,8 @@ workflow {
 
         /* TO DO: TENGO UN PROBLEMA CON LA RUTA, HAY QUE ENTREGARLE UNA ABSOLUTA*/
         KRAKEN2(params.db, spades_result)
-
-
     }
 }
-
-
-
 
 workflow.onComplete {
     log.info ( workflow.success ? ("\nDone!\n") : ("Oops ..") )
