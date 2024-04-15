@@ -31,3 +31,14 @@ contigs.fasta: Similar a scaffolds.fasta, este archivo contiene las secuencias d
 assembly_graph.fastg: Este archivo contiene la representación gráfica del ensamblaje generado por SPAdes en el formato FASTG. Puede ser útil para visualizar el ensamblaje y comprender la estructura de los contigs y scaffolds.
 
 Indexar el genoma de referencia es necesario para mejorar la eficiencia del alineamiento. Cuando indexas el genoma de referencia, Bowtie2 crea estructuras de datos optimizadas que le permiten buscar rápidamente regiones similares en el genoma durante el proceso de alineamiento. Esto es especialmente importante cuando estás alineando grandes cantidades de secuencias contra un genoma de referencia extenso.
+
+
+    /*
+        Llamado de variantes // necesito una ref bowtie 
+        Asignación taxonómica
+        Identificación ARg
+        Análisis filogenético //  min 3 // 3 fasta // cual arbol, el genoma del organismo, un arbol de los genes o un arbol del proteoma , ¡genoma!
+        
+        Determinar incompatibilidad de plásmidos
+    
+    */

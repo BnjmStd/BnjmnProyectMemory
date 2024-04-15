@@ -20,11 +20,14 @@ params.phred_offset = ''
 /* params Llamado de variante */
 params.variantCall = null
 params.variantRef = null
+params.variantRefId = null
 /* params para kraken2 */
 params.kraken = null
 params.db = null
-/* armfinder */
-params.armFinder = null
+/* amrFinder */
+params.amrFinder = null
+params.organism = null
+params.type = null
 
 /* process */ 
 /* Evaluación de calidad */
@@ -43,18 +46,22 @@ include { DICT_SAMTOOLS } from './src/process/variantCall.nf'
 include { SAM_TO_BAM } from './src/process/variantCall.nf'
 /* Identificación Taxonómica */
 include { KRAKEN2 } from './src/process/Taxonomy.nf'
+/* Identificación de ARG */
+include { AMRFINDER } from './src/process/amrfinder.nf'
+include { AMRFINDER_ORGANISM } from './src/process/amrfinder.nf'
 
 /* Services */
 include { check_file } from './src/services/check_files_exist.nf'
 include { check_directory } from './src/services/check_path_exist.nf'
 include { countFiles } from './src/services/countFiles.nf'
 include { validarFasta } from './src/services/validFasta.nf'
+include { check_organism } from './src/services/check_organism.nf'
 
 /* Flujos de trabajo */
 include { initialDownload } from './src/workflows/initialDownload.nf'
 include { fastqc_review } from './src/workflows/fastqc.nf'
 
-if( !nextflow.version.matches('>=23.0') ) {
+if(!nextflow.version.matches('>=23.0')) {
     println "This workflow requires Nextflow version 20.04 or greater and you are running version $nextflow.version"
     exit 1
 }
@@ -65,21 +72,12 @@ if (params.fastqc) {
     flag = true
 }
 
-    /*
-        Llamado de variantes // necesito una ref bowtie 
-        Asignación taxonómica
-        Identificación ARg
-        Análisis filogenético //  min 3 // 3 fasta // cual arbol, el genoma del organismo, un arbol de los genes o un arbol del proteoma , ¡genoma!
-        
-        Determinar incompatibilidad de plásmidos
-    
-    */
-
 workflow {
 
     check_directory(params.path)
     def cantidadArchivos = countFiles(params.path)
 
+    /* sra toolkit */
     if (cantidadArchivos == 0 && params.id_sra == null) {
         throw new Error ('Faltan parámetros')
     } else if (cantidadArchivos == 0 && params.id_sra != null) {
@@ -106,6 +104,7 @@ workflow {
 
     fastqc_review(files, flag)
 
+    /* trimmomatic */
     if (params.trimmo && flag == false) {
         files
         if (params.trimmo.toLowerCase() == 'se' ||  params.trimmo.toLowerCase() == 'pe') {
@@ -133,6 +132,7 @@ workflow {
             throw new Error('El valor del parámetro "trimmo" debe ser "SE" o "PE"\n')
         }
     }
+
     /* ensamble de novo */
     if (params.spades) {
         if (params.trimmo.toLowerCase() == 'pe') {
@@ -163,14 +163,12 @@ workflow {
         }
     }
 
-    /* bowtie2 and Gatk */
-
     /* variantCalling*/
-    if ((params.variantCall != null) && (params.trimmo.toLowerCase() == 'se' || params.trimmo.toLowerCase() == 'pe') && flag == false) {
+    if ((params.variantCall != null) && (params.spades != null) && flag == false) {
         // ok si paso, valido la ref
         if (params.variantRef) {
             // ok, valido la ref y ahora valido que es una ref (Fasta)
-            validarFasta(params.variantRef)
+            validarFasta(params.variantRef) 
             /* ahora que tengo la validación del fasta
             genero la indexcación del genoma para alinear
             debo pasarle el scaffold.fasta y el ref
@@ -191,13 +189,14 @@ workflow {
             resultVariantCalling = VARIANT_CALLING(file(params.variantRef), result_FAI ,result_Dict, bam_alineamiento)
             resultVariantCalling.view { it }
 
+        } else if () {
+            
         } else {
             throw new Error (' Ingrese un genoma de ref ')
         }
     }
 
     /* identificación taxonómica */
-
     if ((params.kraken != null) && (params.spades != null) && (flag == false)){
         /* proceso de kraken */
         spades_result
@@ -207,6 +206,23 @@ workflow {
         /* TO DO: TENGO UN PROBLEMA CON LA RUTA, HAY QUE ENTREGARLE UNA ABSOLUTA*/
         KRAKEN2(params.db, spades_result)
     }
+
+    /* Identificación de ARG */
+    if ((params.amrFinder != null) && (params.type != null) && (params.spades != null) && (flag == false)){
+        spades_result
+        if (params.organism != null ) {
+            check_organism(params.organism)
+            AMRFINDER_ORGANISM("--organism ${params.organism}", params.type, spades_result)
+        }
+
+        if ((params.type == 'p') || (params.type == 'n')) {
+            if (params.organism == null) {
+                AMRFINDER(params.type, spades_result)
+            }
+        } else {
+            throw new Error('Params.type inválido')
+        }
+    } 
 }
 
 workflow.onComplete {

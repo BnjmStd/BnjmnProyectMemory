@@ -54,16 +54,3 @@ process FASTQC {
     fastqc -o fastqc_${inputFile.baseName}_logs -f fastq -q $inputFile
     """
 }
-process FASTQC_2 {
-    input:
-    path inputFile
-    
-    output:
-    path "fastqc_${inputFile.baseName}_logs"
-    
-    script:
-    """
-    mkdir fastqc_${inputFile.baseName}_logs
-    fastqc -o fastqc_${inputFile.baseName}_logs -f fastq -q $inputFile
-    """
-}

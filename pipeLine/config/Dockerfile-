@@ -34,7 +34,7 @@ RUN wget -O /tmp/bowtie2.tar.gz https://github.com/BenLangmead/bowtie2/releases/
     unzip /tmp/bowtie2.tar.gz -d /usr/local/bin && \
     rm /tmp/bowtie2.tar.gz
 
-    # Agregar directorio de Bowtie2 al PATH
+# Agregar directorio de Bowtie2 al PATH
 ENV PATH="/usr/local/bin/bowtie2-2.4.4-linux-x86_64:${PATH}"
 
 # Descargar e instalar GATK
@@ -71,22 +71,27 @@ RUN apt-get update && \
     (cd easel; make install) && \
     rm -rf hmmer.tar.gz hmmer-3.4
 
-# Descargar AMRFinder y descomprimirlo
-RUN mkdir -p /usr/local/bin/data/latest && \
-    mkdir /amrfinder && \
-    chmod +x /amrfinder && \
+# Instalar dependencias necesarias para compilar AMRFinder
+RUN apt-get update && \
+    apt-get install -y git build-essential libcurl4-openssl-dev
+
+# Descargar AMRFinder desde GitHub
+RUN git clone https://github.com/ncbi/amr.git /amrfinder && \
     cd /amrfinder && \
-    URL=$(curl -s https://api.github.com/repos/ncbi/amr/releases/latest | grep "browser_download_url.*amrfinder_binaries" | cut -d '"' -f 4) && \
-    curl -sOL "$URL" && \
-    tar xvfz $(basename $URL) && \
-    rm $(basename $URL)
+    make && \
+    make install
 
-# Descargar la base de datos de AMRFinder
-RUN /amrfinder/amrfinder -u
+# Ejecutar AMRFinder para descargar la base de datos
+RUN amrfinder -u
 
-# Mover el ejecutable amrfinder a un directorio incluido en PATH y actualizar el PATH
-RUN mv /amrfinder/amrfinder /usr/local/bin/ && \
-    export PATH="/usr/local/bin:/amrfinder:${PATH}"
+ENV DEBIAN_FRONTEND=noninteractive
+ENV TZ=UTC
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends r-base r-base-dev
+
+# Instala el paquete rentrez en R
+RUN R -e "install.packages('rentrez', repos='http://cran.rstudio.com/')"
 
 # Establecer el directorio de trabajo
 WORKDIR /workspace
