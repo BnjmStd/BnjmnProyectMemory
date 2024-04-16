@@ -44,6 +44,7 @@ include { VARIANT_CALLING } from './src/process/variantCall.nf'
 include { INDEX_GENOME_SAMTOOLS } from './src/process/variantCall.nf'
 include { DICT_SAMTOOLS } from './src/process/variantCall.nf'
 include { SAM_TO_BAM } from './src/process/variantCall.nf'
+include { DOWNLOADREF } from './src/process/downloadRef.nf'
 /* Identificación Taxonómica */
 include { KRAKEN2 } from './src/process/Taxonomy.nf'
 /* Identificación de ARG */
@@ -56,6 +57,7 @@ include { check_directory } from './src/services/check_path_exist.nf'
 include { countFiles } from './src/services/countFiles.nf'
 include { validarFasta } from './src/services/validFasta.nf'
 include { check_organism } from './src/services/check_organism.nf'
+include { check_id } from './src/services/check_id.nf'
 
 /* Flujos de trabajo */
 include { initialDownload } from './src/workflows/initialDownload.nf'
@@ -189,10 +191,13 @@ workflow {
             resultVariantCalling = VARIANT_CALLING(file(params.variantRef), result_FAI ,result_Dict, bam_alineamiento)
             resultVariantCalling.view { it }
 
-        } else if () {
-            
+        } else if (params.variantRef == null && params.variantRefId != null) {
+            /* valido el id del genoma para proceder a descargar */
+            check_id(params.variantRefId)
+            /* ya que lo tengo descargo el genoma con R y rentrez*/
+            DOWNLOADREF(params.variantRefId)
         } else {
-            throw new Error (' Ingrese un genoma de ref ')
+            throw new Error('Ingrese un genoma de ref ')
         }
     }
 
