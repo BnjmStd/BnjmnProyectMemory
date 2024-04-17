@@ -8,7 +8,7 @@ process AMRFINDER {
     
     script:
     """
-    amrfinder "-$type" $output_spades/scaffolds.fasta > amr_results.txt
+    amrfinder "-$type" $output_spades > amr_results.txt
     """
 }
 
@@ -23,6 +23,6 @@ process AMRFINDER_ORGANISM {
     
     script:
     """
-    amrfinder $organism "-$type" $output_spades/scaffolds.fasta > amr_results.txt
+    amrfinder $organism "-$type" $output_spades > amr_results.txt
     """
 }

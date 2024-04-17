@@ -7,16 +7,20 @@ process TRIMMO_PE {
     val trimlog
     val summary
     val illuminaAdapter
+    val leading 
+    val trailing 
+    val slidingwindow 
+    val minlen 
 
     output:
     tuple path("${forward_fastq.baseName}_output_forward.fastq"), path("${reverse_fastq.baseName}_output_reverse.fastq")
 
     script:
     """
-    java -jar /usr/share/java/trimmomatic-0.39.jar PE $phred -threads $threads -trimlog $trimlog -summary $summary $forward_fastq $reverse_fastq \\
+    java -jar /usr/share/java/trimmomatic-0.39.jar PE $phred $threads $trimlog $summary $forward_fastq $reverse_fastq \\
         ${forward_fastq.baseName}_output_forward_paired.fastq ${forward_fastq.baseName}_output_forward_unpaired.fastq \\
         ${reverse_fastq.baseName}_output_reverse_paired.fastq ${reverse_fastq.baseName}_output_reverse_unpaired.fastq \\
-        ILLUMINACLIP:$illuminaAdapter
+        $illuminaAdapter $leading $trailing $slidingwindow $minlen
 
     cat ${forward_fastq.baseName}_output_forward_paired.fastq ${forward_fastq.baseName}_output_forward_unpaired.fastq > ${forward_fastq.baseName}_output_forward.fastq
     cat ${reverse_fastq.baseName}_output_reverse_paired.fastq ${reverse_fastq.baseName}_output_reverse_unpaired.fastq > ${reverse_fastq.baseName}_output_reverse.fastq
@@ -37,7 +41,7 @@ process TRIMMO_SE {
 
     script:
     """    
-    java -jar /usr/share/java/trimmomatic-0.39.jar SE $phred -threads $threads -trimlog $trimlog -summary $summary $k_fastq ${k_fastq.baseName}_log.fastq ILLUMINACLIP:$illuminaAdapter
+    java -jar /usr/share/java/trimmomatic-0.39.jar SE $phred $threads $trimlog  $summary $k_fastq ${k_fastq.baseName}_log.fastq $illuminaAdapter
     """
 }
 

@@ -4,6 +4,36 @@ Este repositorio contiene un pipeline de análisis de datos desarrollado con Nex
 
 ## Requisitos
 
+# Dependencias del sistema:
+openjdk-11-jre-headless
+curl
+unzip
+trimmomatic
+fastqc
+wget
+spades
+python3
+build-essential
+ncbi-blast+
+git
+libcurl4-openssl-dev
+libssl-dev
+libxml2-dev
+
+# Paquetes de Python:
+
+Nextflow (descargado e instalado manualmente)
+SRA Toolkit (descargado e instalado manualmente)
+Bowtie2 (descargado e instalado manualmente)
+GATK (descargado e instalado manualmente)
+Kraken2 (descargado e instalado manualmente)
+AMRFinder (compilado e instalado desde el código fuente)
+
+# Paquetes de R:
+devtools
+XML
+rentrez (descargado desde GitHub y compilado e instalado desde el código fuente)
+
 
 
 ## Uso

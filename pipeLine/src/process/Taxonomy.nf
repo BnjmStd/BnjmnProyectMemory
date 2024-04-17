@@ -7,6 +7,6 @@ process KRAKEN2 {
     
     script:
     """
-    kraken2 --db $db --report reporte.txt $spades_output/scaffolds.fasta
+    kraken2 --db $db --report reporte.txt $spades_output 
     """
 }
