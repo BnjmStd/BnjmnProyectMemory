@@ -11,7 +11,6 @@ def checkIluminaClip(String clip) {
     def parts = clip.split(':', 2)
     def clipName = parts[0]
     
-    
     if (!iluminaClips.contains(clipName)) {
         throw new IllegalArgumentException("El iluminaclip '$clip' no está en la lista de iluminaclips conocidos.")
     }
@@ -22,5 +21,6 @@ def checkIluminaClip(String clip) {
             throw new IllegalArgumentException("El iluminaclip '$clip' no tiene el formato esperado.")
         }
     }
+
     return true
 }

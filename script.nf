@@ -272,8 +272,6 @@ workflow {
     }
     /* Llamado de variantes */
     /* anotación funcional */
-
-
 }
 
 workflow.onComplete {
