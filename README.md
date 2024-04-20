@@ -1,3 +1,27 @@
+
+
+
+
+<main align = "center"> 
+    <h1> Biotools </h1>
+</main>
+
+![static Badge](https://img.shields.io/badge/any_text-you_like-blue)
+
+> [!NOTE]
+> Useful information that users should know, even when skimming content.
+
+> [!TIP]
+> Helpful advice for doing things better or more easily.
+
+> [!IMPORTANT]
+> Key information users need to know to achieve their goal.
+
+> [!WARNING]
+> Urgent info that needs immediate user attention to avoid problems.
+
+> [!CAUTION]
+> Advises about risks or negative outcomes of certain actions.
 # Pipeline de Análisis de Datos con Nextflow
 
 Este repositorio contiene un pipeline de análisis de datos desarrollado con Nextflow. El pipeline está diseñado para realizar [use].
@@ -19,6 +43,7 @@ git
 libcurl4-openssl-dev
 libssl-dev
 libxml2-dev
+
 
 # Paquetes de Python:
 
