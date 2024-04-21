@@ -4,7 +4,6 @@
 ![Code Coverage](https://img.shields.io/badge/Coverage-95%25-brightgreen)
 ![License](https://img.shields.io/badge/License-MIT-blue)
 
-
 # Introducción
 
 # Instalación y Configuración
@@ -20,7 +19,7 @@
 
     Para generar la imagen se recomienda el comando
     `
-    docker-compose docker-compose.yml up --build 
+    docker-compose -f docker-compose.yml up --build 
     `
     
 > [!WARNING]
@@ -32,14 +31,14 @@
 4. Ejecutar el contenedor
 
     Para ejecutar el contendor:
-    `docker-compose -f docker-compose.yml run pipeline /bin/bash
+    `docker-compose docker-compose.yml run pipeline /bin/bash
     `
 
 5. Ejecutar el script 
 
+> [!IMPORTANT]
+> Configurar el archivo [nextflow.config](./nextflow.config) con la cantidad de CPUS y MEMORY acorde a tus intereses.
 
-## Instrucciones para configurar el entorno Docker.
-## Detalles sobre cómo obtener y configurar las imágenes Docker necesarias.
 # Estructura del Pipeline:
 ## Descripción general de la estructura del pipeline.
 ## Explicación de los diferentes módulos o etapas del pipeline.
