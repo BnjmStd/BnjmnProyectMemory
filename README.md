@@ -19,21 +19,21 @@
 3. Generar la imagen
 
     Para generar la imagen se recomienda el comando
-    ```
+    `
     docker-compose docker-compose.yml up --build 
-    ```
-
-> [!WARNING] ⚠️
+    `
+    
+> [!WARNING]
 > La imagen de Docker utilizada para construir el contenedor puede tener un tamaño más elevado de lo normal, lo que puede resultar en un tiempo de construcción prolongado. Estamos trabajando en optimizar esta imagen para reducir su tamaño y mejorar la eficiencia del proceso de construcción. Agradecemos tu paciencia mientras trabajamos en esta mejora.
 
-> [!WARNING] ⚠️
+> [!WARNING]
 > Ten en cuenta que la imagen de Docker generada puede ocupar más espacio en disco de lo esperado. 
 
 4. Ejecutar el contenedor
 
     Para ejecutar el contendor:
-    ``` docker-compose -f docker-compose.yml run pipeline /bin/bash
-    ```
+    `docker-compose -f docker-compose.yml run pipeline /bin/bash
+    `
 
 5. Ejecutar el script 
 
