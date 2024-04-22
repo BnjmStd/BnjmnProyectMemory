@@ -48,6 +48,9 @@ En el caso de realizar un análisis de identificación taxonómica, es necesario
 > [!TIP]
 > Si no desea descargar la base de datos manualmente, existe la funcionalidad de realizarla a través del pipeline con el comando --dbdownload [nombredeladb]. Los nombres de la base de datos disponibles para descargar se encuentran en [Nombres de bases de datos](./misc/dbnames.txt)
 
+> [!CAUTION]
+> Se debe escribir tal cual se encuentran las colecciones dentro del archivo en la ejecución del pipeline.
+
 # Estructura del Pipeline:
 ## Descripción general de la estructura del pipeline.
 ## Explicación de los diferentes módulos o etapas del pipeline.
