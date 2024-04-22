@@ -34,10 +34,19 @@
     `docker-compose docker-compose.yml run pipeline /bin/bash
     `
 
-5. Ejecutar el script 
+5. Antes de ejecutar el pipeline 
 
 > [!IMPORTANT]
 > Configurar el archivo [nextflow.config](./nextflow.config) con la cantidad de CPUS y MEMORY acorde a tus intereses.
+
+> [!NOTE] 
+> Si desea realizar la descarga de fastq a través del pípeline utilizando SRAtoolkit ejecute ``
+
+
+En el caso de realizar un análisis de identificación taxonómica, es necesario la descarga previa de la base de datos de la web oficial de kraken2 https://benlangmead.github.io/aws-indexes/k2
+
+> [!TIP]
+> Si no desea descargar la base de datos manualmente, existe la funcionalidad de realizarla a través del pipeline con el comando --dbdownload [nombredeladb]. Los nombres de la base de datos disponibles para descargar se encuentran en [Nombres de bases de datos](./misc/dbnames.txt)
 
 # Estructura del Pipeline:
 ## Descripción general de la estructura del pipeline.
@@ -54,35 +63,6 @@
 ## Lista de todas las dependencias y requisitos de software.
 
 [Nombre del archivo](ruta/del/archivo)
-
-## Dependencias del sistema:
-- openjdk-11-jre-headless
-- curl
-- unzip
-- trimmomatic
-- fastqc
-- wget
-- spades
-- python3
-- build-essential
-- ncbi-blast+
-- git
-- libcurl4-openssl-dev
-- libssl-dev
-- libxml2-dev
-
-## Paquetes de Python:
-- Nextflow (descargado e instalado manualmente)
-- SRA Toolkit (descargado e instalado manualmente)
-- Bowtie2 (descargado e instalado manualmente)
-- GATK (descargado e instalado manualmente)
-- Kraken2 (descargado e instalado manualmente)
-- AMRFinder (compilado e instalado desde el código fuente)
-
-## Paquetes de R:
-- devtools
-- XML
-- rentrez (descargado desde GitHub y compilado e instalado desde el código fuente)
 
 
 ## Detalles sobre las versiones específicas de las herramientas utilizadas.
