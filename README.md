@@ -6,6 +6,8 @@
 
 # Introducción
 
+![Texto alternativo](./misc/photos/Pipeline.png)
+
 # Instalación y Configuración
 ### Uso:
 
