@@ -9,7 +9,7 @@ params.f = null
 /* params sra toolkit */
 params.id_sra = null
 params.pairs = null 
-params.x = 1000
+params.x = 500
 /* params trimmomatic  */
 params.threads = 1
 params.phred = null
@@ -34,7 +34,11 @@ params.amrFinder = null
 params.organism = null
 params.type = null
 
+/*  download kraken2db */
+params.dbdownload = null
+
 /* process */ 
+include { DOWNLOAD_DECOMPRESS_DBKRAKEN2 } from './src/process/downloadDBKraken2.nf'
 /* Evaluación de calidad */
 include { TRIMMO_PE } from './src/process/preprocessing.nf'
 include { TRIMMO_SE } from './src/process/preprocessing.nf'
@@ -58,6 +62,7 @@ include { countFiles } from './src/services/countFiles.nf'
 include { validarFasta } from './src/services/validFasta.nf'
 include { check_id } from './src/services/check_id.nf'
 include { checkIluminaClip } from './src/services/check_iluminaClip.nf'
+include { validarColeccion } from './src/services/check_db_download.nf'
 
 /* Flujos de trabajo */
 include { initialDownload } from './src/workflows/initialDownload.nf'
@@ -119,7 +124,17 @@ workflow {
         throw new Error('No se puede ejecutar --f y --path juntos')
     
     } else if (params.f == null && params.path == null) {
-        throw new Error('Faltan parámetros importantes.')
+        if (params.dbdownload) {
+            if (params.dbdownload == true) {
+                throw new Error ('Falta colección')
+            } else {
+                /* valido que la bd exista*/
+                def x = validarColeccion(params.dbdownload)
+                DOWNLOAD_DECOMPRESS_DBKRAKEN2(x)
+            }
+        } else {
+            throw new Error('Faltan parámetros importantes.')
+        }
     }
 
     /* trimmomatic */
@@ -272,6 +287,9 @@ workflow {
     }
     /* Llamado de variantes */
     /* anotación funcional */
+
+
+    /* Reporte final */
 }
 
 workflow.onComplete {

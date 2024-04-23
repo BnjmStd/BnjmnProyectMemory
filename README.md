@@ -69,7 +69,7 @@ En el caso de realizar un análisis de identificación taxonómica, es necesario
 ## Detalles sobre cómo personalizar la configuración del pipeline.
 ## Explicación de cómo modificar parámetros, cambiar flujos de trabajo o agregar nuevas funcionalidades.
 # Dependencias y Requisitos:
-## Lista de todas las dependencias y requisitos de software.
+La lista de todas las dependencias y requisitos de software.
 
 [Nombre del archivo](ruta/del/archivo)
 
