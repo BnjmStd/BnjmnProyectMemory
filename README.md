@@ -6,6 +6,10 @@
 
 # Introducción
 
+En respuesta a la creciente nececidad de simplificar el análisis de bacterias, se ha desarrollado un pipeline en NextFlow. Este facilita el análisis de resistencia antibióticos (ARG), llamada de variantes, identificación taxonomica y anotación funcional de bacterias noveles. El objetivo principal de este pipeline es proporcionar a los investigadores, incluso aquellos con conocimiento limitados en bioinformática, una herramienta accesible para explorar bacterias. 
+
+El pipeline incluye la automatización de etapas claves como el procesamiento de datos crudos, como herramientas como trimmomatic, fastqc, el ensamblaje de genomas bacterianos utilizando SPAdes para un posterior análisis. Además, se ha diseñado un reporte completo que presenta de manera clara y concisa los resultados obtenidos, lo que permite una fácil interpretación.
+
 ![Texto alternativo](./misc/photos/Pipeline.png)
 
 # Instalación y Configuración
