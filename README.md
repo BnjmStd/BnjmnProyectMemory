@@ -179,11 +179,10 @@ Ejecutar kraken2 junto a un preprocesamiento y ensamble:
 > [!WARNING]
 > Se recomienda usar una ruta para la base de datos absoluta. Ejecute `$pwd` para conocerla.
 
-Ejecutar kraken2 a través de un fasta:
+- Ejecutar kraken2 a través de un fasta:
 
 ```
     nextflow run script.nf --f [archivo fasta] \
-        --spades \
         --kraken \
         --db [ruta de la base de datos]
 ```
@@ -191,10 +190,66 @@ Ejecutar kraken2 a través de un fasta:
 > [!NOTE] 
 > Recuerda que se puede descargar la base de datos que usted desee a través del comando `--dbdownload`
 
+### Identificación de ARG 
 
+Para realizar la identificación de genes de resistencia antibióticos se utiliza AMRFinder.
 
+- Para ejecutar AMRFinder junto a un preprocesamiento y ensamble: 
 
-### Identificación de ARG
+```
+    nextflow run script.nf --path [directorio] \
+        --trimmo pe \
+        --threads 2 \
+        --leading 3 \        
+        --trailing 3 \        
+        --slidingwindow 4:15 \        
+        --minlen 36 \
+        --spades \  
+        --amrFinder \
+        --organism Acinetobacter_baumannii \
+        --type p
+```
+> [!WARNING]
+> El `--organism` es opcional, se suele utilizar para una mayor eficacia.
+
+Para el parámetro organism se aceptan: 
+
+        "Acinetobacter_baumannii",
+        "Burkholderia_cepacia",
+        "Burkholderia_pseudomallei",
+        "Campylobacter",
+        "Citrobacter_freundii",
+        "Clostridioides_difficile",
+        "Enterobacter_asburiae",
+        "Enterobacter_cloacae",
+        "Enterococcus_faecalis",
+        "Enterococcus_faecium",
+        "Escherichia",
+        "Klebsiella_oxytoca",
+        "Klebsiella_pneumoniae",
+        "Neisseria_gonorrhoeae",
+        "Neisseria_meningitidis",
+        "Pseudomonas_aeruginosa",
+        "Salmonella",
+        "Serratia_marcescens",
+        "Staphylococcus_aureus",
+        "Staphylococcus_pseudintermedius",
+        "Streptococcus_agalactiae",
+        "Streptococcus_pneumoniae",
+        "Streptococcus_pyogenes",
+        "Vibrio_cholerae",
+        "Vibrio_parahaemolyticus",
+        "Vibrio_vulnificus
+
+y para el parámetro type: n | p
+
+- Ejecutar AMRFinder a través de un Fasta:
+    ```
+    nextflow run script.nf --f [archivo fasta] \
+        --amrFinder \
+        --organism Acinetobacter_baumannii \
+        --type p
+    ```
 
 ### Llamado de variantes
 
