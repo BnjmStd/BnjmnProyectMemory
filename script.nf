@@ -214,7 +214,8 @@ workflow {
     if ((params.phylogenetic != null) && (params.spades != null) && (flag == false)) {
         spades_result  
         fasta = spades_result.flatMap { it.listFiles() }.filter{ it.name == 'scaffolds.fasta' }
-        PHYLOGENETIC(fasta)
+        emitt_ = alineamiento(params.variantRef, fasta)
+        PHYLOGENETIC(emitt_)
     } 
 
     /* variantCalling*/

@@ -66,7 +66,7 @@ Para comenzar a usar el pipeline, es esencial tener un directorio disponible. Pu
 
 Si el directorio está vacío y deseas comenzar a descargar archivos FastQ para un análisis posterior, puedes usar el siguiente comando:
 
-```
+```bash
     nextflow run script.nf --path [directorio vacio ] \
     --id_sra [SRRXXXXX] \
     --x  1000 
@@ -85,7 +85,7 @@ Dentro del pipeline se puede utilizar FastQC y trimmomatic para poder procesar l
 
 Para ejecutar FastQC, utiliza el siguiente comando:
 
-```
+```bash
 nextflow run script.nf --path [directorio] \
     --fastqc
 ```
@@ -95,39 +95,25 @@ nextflow run script.nf --path [directorio] \
 
 Para ejecutar Trimmomatic se dispone de varios parámetros con sus valores por defecto:
 
+- `--trimmo`: PE | SE
+- `--threads`: número de threads disponibles.
+- `--phreads`: phred33 | phred64
+- `--illuminaAdapter`: "TruSeq3-PE-2.fa", "TruSeq3-PE.fa", "TruSeq2-PE.fa", "NexteraPE-PE.fa", "TruSeq3-SE.fa", "NexteraPE-PE.fa"
+- `--leading`
+- `--trailing`
+- `--slidingwindow`
+- `--minlen`
 
---trimmo: PE | SE
+Ejemplos de ejecución:
 
---threads: número de threads que dispone.
-
---phreads: phred33 | phred64
-
---illuminaAdapter: "TruSeq3-PE-2.fa",
-        "TruSeq3-PE.fa",
-        "TruSeq2-PE.fa",
-        "NexteraPE-PE.fa",
-        "TruSeq3-SE.fa",
-        "NexteraPE-PE.fa"
-
---leading 
-
---trailing 
-
---slidingwindow 
-
---minlen 
-
-
-Ejemplos de ejecución: 
-
-```
-    nextflow run script.nf --path [directorio] \
-        --trimmo pe \
-        --threads 2 \
-        --leading 3  \
-        --trailing 3 \
-        --slidingwindow 4:15 \
-        --minlen 36 \ 
+```bash
+nextflow run script.nf --path [directorio] \
+    --trimmo pe \
+    --threads 2 \
+    --leading 3 \
+    --trailing 3 \
+    --slidingwindow 4:15 \
+    --minlen 36
 ```
 
 >[!IMPORTANT]
@@ -141,7 +127,7 @@ Para realizar el ensamble de novo dentro del pipeline hay varios caminos:
 
 Se puede usar el parámetro `--trimmo` & `--spades`, ejemplo de uso:
 
-```
+```bash
     nextflow run script.nf --path [directorio] \
         --trimmo pe \
         --threads 2 \
@@ -164,7 +150,7 @@ Para la identificación Taxonómica se utiliza Kraken2, hay varias maneras de lo
 
 Ejecutar kraken2 junto a un preprocesamiento y ensamble:
 
-```
+```bash
     nextflow run script.nf --path [directorio] \
         --trimmo pe \
         --threads 2 \
@@ -181,7 +167,7 @@ Ejecutar kraken2 junto a un preprocesamiento y ensamble:
 
 - Ejecutar kraken2 a través de un fasta:
 
-```
+```bash
     nextflow run script.nf --f [archivo fasta] \
         --kraken \
         --db [ruta de la base de datos]
@@ -196,7 +182,7 @@ Para realizar la identificación de genes de resistencia antibióticos se utiliz
 
 - Para ejecutar AMRFinder junto a un preprocesamiento y ensamble: 
 
-```
+```bash
     nextflow run script.nf --path [directorio] \
         --trimmo pe \
         --threads 2 \
@@ -212,44 +198,48 @@ Para realizar la identificación de genes de resistencia antibióticos se utiliz
 > [!WARNING]
 > El `--organism` es opcional, se suele utilizar para una mayor eficacia.
 
-Para el parámetro organism se aceptan: 
+Para el parámetro `organism` se aceptan las siguientes opciones:
 
-        "Acinetobacter_baumannii",
-        "Burkholderia_cepacia",
-        "Burkholderia_pseudomallei",
-        "Campylobacter",
-        "Citrobacter_freundii",
-        "Clostridioides_difficile",
-        "Enterobacter_asburiae",
-        "Enterobacter_cloacae",
-        "Enterococcus_faecalis",
-        "Enterococcus_faecium",
-        "Escherichia",
-        "Klebsiella_oxytoca",
-        "Klebsiella_pneumoniae",
-        "Neisseria_gonorrhoeae",
-        "Neisseria_meningitidis",
-        "Pseudomonas_aeruginosa",
-        "Salmonella",
-        "Serratia_marcescens",
-        "Staphylococcus_aureus",
-        "Staphylococcus_pseudintermedius",
-        "Streptococcus_agalactiae",
-        "Streptococcus_pneumoniae",
-        "Streptococcus_pyogenes",
-        "Vibrio_cholerae",
-        "Vibrio_parahaemolyticus",
-        "Vibrio_vulnificus"
+- "Acinetobacter_baumannii"
+- "Burkholderia_cepacia"
+- "Burkholderia_pseudomallei"
+- "Campylobacter"
+- "Citrobacter_freundii"
+- "Clostridioides_difficile"
+- "Enterobacter_asburiae"
+- "Enterobacter_cloacae"
+- "Enterococcus_faecalis"
+- "Enterococcus_faecium"
+- "Escherichia"
+- "Klebsiella_oxytoca"
+- "Klebsiella_pneumoniae"
+- "Neisseria_gonorrhoeae"
+- "Neisseria_meningitidis"
+- "Pseudomonas_aeruginosa"
+- "Salmonella"
+- "Serratia_marcescens"
+- "Staphylococcus_aureus"
+- "Staphylococcus_pseudintermedius"
+- "Streptococcus_agalactiae"
+- "Streptococcus_pneumoniae"
+- "Streptococcus_pyogenes"
+- "Vibrio_cholerae"
+- "Vibrio_parahaemolyticus"
+- "Vibrio_vulnificus"
 
-y para el parámetro type: n | p
+Para el parámetro `type`, se aceptan las siguientes opciones:
 
-- Ejecutar AMRFinder a través de un Fasta:
-    ```
-    nextflow run script.nf --f [archivo fasta] \
-        --amrFinder \
-        --organism Acinetobacter_baumannii \
-        --type p
-    ```
+- n: normal
+- p: pathogenic
+
+Ejemplo de ejecución de AMRFinder a través de un archivo Fasta:
+
+```bash
+nextflow run script.nf --f [archivo fasta] \
+    --amrFinder \
+    --organism Acinetobacter_baumannii \
+    --type p
+```
 
 ### Llamado de variantes
 
