@@ -273,12 +273,12 @@ workflow {
         check_directory(file(params.db))
         kraken2_taxonomy(params.db, file(params.f))
     }
+    
     /* ARG */
     if ((params.f != null) && (params.amrFinder != null) && (params.type != null) && (flag == false)) {
         amrFinder_workflow(params.organism, params.type, file(params.f))
     }
     
-    /* Llamado de variantes */
     /* anotación funcional */
 
 

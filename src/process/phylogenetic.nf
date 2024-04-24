@@ -8,8 +8,7 @@ process PHYLOGENETIC {
 
     script:
     """
-    Rscript -e "library(ape);
-
+    Rscript -e "
                 # Leer datos de alineamiento en formato SAM
                 alineamiento <- read.table('${sam_file}', sep='\t', header=FALSE, comment.char='');
 
@@ -26,6 +25,7 @@ process PHYLOGENETIC {
                 # Visualizar árbol filogenético
                 png(filename='${sam_file.baseName}_arbol.png', width=800, height=600);
                 plot(arbol_optimizado);
-                dev.off();"
+                dev.off();
+                "
     """
 }
