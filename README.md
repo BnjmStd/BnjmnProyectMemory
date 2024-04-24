@@ -133,6 +133,74 @@ Ejemplos de ejecución:
 >[!IMPORTANT]
 > A diferencia de FastQC, Trimmomatic puede combinarse con otros parámetros. Esto significa que los resultados de Trimmomatic pueden alimentar directamente a SPAdes para su posterior análisis.
 
+## Ensamble
+
+Para realizar el ensamble de novo dentro del pipeline hay varios caminos:
+
+- Preprocesamiento y ensamble: 
+
+Se puede usar el parámetro `--trimmo` & `--spades`, ejemplo de uso:
+
+```
+    nextflow run script.nf --path [directorio] \
+        --trimmo pe \
+        --threads 2 \
+        --leading 3 \        
+        --trailing 3 \        
+        --slidingwindow 4:15 \        
+        --minlen 36 \
+        --spades
+
+```
+
+## Análisis
+
+> [!TIP]
+> Se puede usar `--trimmo` `--spades` para alimentar uno o varios análisis
+
+### Identificación taxonómica
+
+Para la identificación Taxonómica se utiliza Kraken2, hay varias maneras de lograr generar el análisis:
+
+Ejecutar kraken2 junto a un preprocesamiento y ensamble:
+
+```
+    nextflow run script.nf --path [directorio] \
+        --trimmo pe \
+        --threads 2 \
+        --leading 3 \        
+        --trailing 3 \        
+        --slidingwindow 4:15 \        
+        --minlen 36 \
+        --spades \
+        --kraken \
+        --db [ruta de la base de datos]
+```
+> [!WARNING]
+> Se recomienda usar una ruta para la base de datos absoluta. Ejecute `$pwd` para conocerla.
+
+Ejecutar kraken2 a través de un fasta:
+
+```
+    nextflow run script.nf --f [archivo fasta] \
+        --spades \
+        --kraken \
+        --db [ruta de la base de datos]
+```
+
+> [!NOTE] 
+> Recuerda que se puede descargar la base de datos que usted desee a través del comando `--dbdownload`
+
+
+
+
+### Identificación de ARG
+
+### Llamado de variantes
+
+### Anotación funcional
+
+## Reporte
 
 # Configuración Avanzada:
 ## Detalles sobre cómo personalizar la configuración del pipeline.
