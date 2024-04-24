@@ -103,5 +103,8 @@ RUN wget https://github.com/ropensci/rentrez/archive/refs/heads/master.tar.gz &&
     tar -zxvf master.tar.gz && \
     R CMD INSTALL rentrez-master/
 
+# Instala los paquetes stringr y ape en R
+RUN R -e "install.packages(c('stringr', 'ape'), repos='http://cran.rstudio.com/')"
+
 # Establecer el directorio de trabajo
 WORKDIR /workspace

@@ -239,7 +239,7 @@ Para el parámetro organism se aceptan:
         "Streptococcus_pyogenes",
         "Vibrio_cholerae",
         "Vibrio_parahaemolyticus",
-        "Vibrio_vulnificus
+        "Vibrio_vulnificus"
 
 y para el parámetro type: n | p
 
@@ -261,6 +261,7 @@ y para el parámetro type: n | p
 ## Detalles sobre cómo personalizar la configuración del pipeline.
 ## Explicación de cómo modificar parámetros, cambiar flujos de trabajo o agregar nuevas funcionalidades.
 # Dependencias y Requisitos:
+
 La lista de todas las dependencias y requisitos de software.
 
 [Nombre del archivo](ruta/del/archivo)

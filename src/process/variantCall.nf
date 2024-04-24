@@ -22,7 +22,7 @@ process ALINEAMIENTO {
     
     script:
     """
-    bowtie2 -x $index_dir/refgen -f $spades_output/scaffolds.fasta -S aligned_reads.sam
+    bowtie2 -x $index_dir/refgen -f $spades_output -S aligned_reads.sam
     """
 }
 
