@@ -1,7 +1,6 @@
 #!/usr/bin/env nextflow
 
 /* params */
-params.trimmo = null
 params.path = null
 params.fastqc = null
 params.spades = null
@@ -11,6 +10,7 @@ params.id_sra = null
 params.pairs = null 
 params.x = 500
 /* params trimmomatic  */
+params.trimmo = null
 params.threads = 1
 params.phred = null
 params.trimlog = null
@@ -285,6 +285,7 @@ workflow {
     if ((params.f != null) && (params.amrFinder != null) && (params.type != null) && (flag == false)) {
         amrFinder_workflow(params.organism, params.type, file(params.f))
     }
+    
     /* Llamado de variantes */
     /* anotación funcional */
 

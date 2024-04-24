@@ -57,13 +57,82 @@ En el caso de realizar un análisis de identificación taxonómica, es necesario
 > [!CAUTION]
 > Se debe escribir tal cual se encuentran las colecciones dentro del archivo en la ejecución del pipeline.
 
-# Estructura del Pipeline:
-## Descripción general de la estructura del pipeline.
-## Explicación de los diferentes módulos o etapas del pipeline.
 # Instrucciones de Uso:
-## Guía detallada para ejecutar el pipeline.
-## Comandos básicos para iniciar el pipeline.
-## Ejemplos de uso con diferentes configuraciones o conjuntos de datos.
+
+Para comenzar a usar el pipeline, es esencial tener un directorio disponible. Puede ser un directorio vacío o uno que contenga archivos FastQ.
+
+> [!IMPORTANT]
+> Si no planea trabajar con archivos FastQ y, por ende, no realizará limpieza de lecturas ni ensamblaje, se recomienda no utilizar el parámetro --path --> Use --f
+
+Si el directorio está vacío y deseas comenzar a descargar archivos FastQ para un análisis posterior, puedes usar el siguiente comando:
+
+```
+    nextflow run script.nf --path [directorio vacio ] \
+    --id_sra [SRRXXXXX] \
+    --x  1000 
+```
+
+Por defecto, se descargarán 1000 lecturas, pero puedes cambiar este número utilizando el parámetro `--x`.
+
+Además, si la librería tiene el formato Layout: PAIRED, puedes usar `--paired` para descargar el par de archivos FastQ correspondientes.
+
+> [!WARNING]
+> Recuerde que para descargar se debe disponer de un ID SRR.
+
+## Preprocesamiento
+
+Dentro del pipeline se puede utilizar FastQC y trimmomatic para poder procesar las lecturas.
+
+Para ejecutar FastQC, utiliza el siguiente comando:
+
+```
+nextflow run script.nf --path [directorio] \
+    --fastqc
+```
+
+> [!CAUTION]
+> Por el momento, no se encuentra necesario mezlcar el parámetro `--fastqc` con los demás por ende no se admiten más parámetros usando FastQC.
+
+Para ejecutar Trimmomatic se dispone de varios parámetros con sus valores por defecto:
+
+
+--trimmo: PE | SE
+
+--threads: número de threads que dispone.
+
+--phreads: phred33 | phred64
+
+--illuminaAdapter: "TruSeq3-PE-2.fa",
+        "TruSeq3-PE.fa",
+        "TruSeq2-PE.fa",
+        "NexteraPE-PE.fa",
+        "TruSeq3-SE.fa",
+        "NexteraPE-PE.fa"
+
+--leading 
+
+--trailing 
+
+--slidingwindow 
+
+--minlen 
+
+
+Ejemplos de ejecución: 
+
+```
+    nextflow run script.nf --path [directorio] \
+        --trimmo pe \
+        --threads 2 \
+        --leading 3  \
+        --trailing 3 \
+        --slidingwindow 4:15 \
+        --minlen 36 \ 
+```
+
+>[!IMPORTANT]
+> A diferencia de FastQC, Trimmomatic puede combinarse con otros parámetros. Esto significa que los resultados de Trimmomatic pueden alimentar directamente a SPAdes para su posterior análisis.
+
 
 # Configuración Avanzada:
 ## Detalles sobre cómo personalizar la configuración del pipeline.
