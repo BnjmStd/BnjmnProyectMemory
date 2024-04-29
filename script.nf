@@ -47,8 +47,6 @@ include { UNZIPFILE } from './src/process/decompress.nf'
 /* Ensamble y alineamiento */
 include { SPADES_SE } from './src/process/assembly.nf'
 include { SPADES_PE } from './src/process/assembly.nf'
-/* análisis de */
-include { PHYLOGENETIC } from './src/process/phylogenetic.nf'
 
 /* Services */
 include { check_file } from './src/services/check_files_exist.nf'
@@ -64,8 +62,8 @@ include { initialDownload } from './src/workflows/initialDownload.nf'
 include { fastqc_review } from './src/workflows/fastqc.nf'
 include { kraken2_taxonomy } from './src/workflows/kraken2.nf'
 include { amrFinder_workflow } from './src/workflows/amrFinder.nf'
-include { alineamiento } from './src/workflows/index_genome.nf'
 include { variant_calling } from './src/workflows/variantCalling.nf'
+include { phylogenetic_graph } from './src/workflows/phylogenetic.nf'
 
 if(!nextflow.version.matches('>=23.0')) {
     println "This workflow requires Nextflow version 20.04 or greater and you are running version $nextflow.version"
@@ -214,8 +212,7 @@ workflow {
     if ((params.phylogenetic != null) && (params.spades != null) && (flag == false)) {
         spades_result  
         fasta = spades_result.flatMap { it.listFiles() }.filter{ it.name == 'scaffolds.fasta' }
-        emitt_ = alineamiento(params.variantRef, fasta)
-        PHYLOGENETIC(emitt_)
+        phylogenetic_graph(fasta)
     } 
 
     /* variantCalling*/
@@ -226,9 +223,7 @@ workflow {
             validarFasta(params.variantRef) 
             spades_result /* need it */
             fasta = spades_result.flatMap { it.listFiles() }.filter{ it.name == 'scaffolds.fasta' }
-            
-            emitt = alineamiento(params.variantRef, fasta)
-            variant_calling(params.variantRef, emitt)
+            variant_calling(params.variantRef, fasta)
             
         } else if (params.variantRef == null && params.variantRefId != null) {
             /* valido el id del genoma para proceder a descargar */

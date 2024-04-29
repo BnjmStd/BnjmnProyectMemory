@@ -1,31 +1,45 @@
-
 process PHYLOGENETIC {
     input:
-    path sam_file
+    file fasta_file
 
     output:
-    file "${sam_file.baseName}_arbol.png"
+    file "_arbol.png"
 
     script:
     """
     Rscript -e "
-                # Leer datos de alineamiento en formato SAM
-                alineamiento <- read.table('${sam_file}', sep='\t', header=FALSE, comment.char='');
+        # Cargar el paquete 'ape'
+        library(ape)
 
-                # Extraer las secuencias alineadas
-                secuencias <- alineamiento\$V10;
+        # Especificar la ruta al archivo FASTA
+        fasta_file <- $fasta_file
 
-                # Realizar el alineamiento con MUSCLE
-                alineamiento_muscle <- msa(secuencias, method='Muscle');
+        # Leer las secuencias desde el archivo FASTA
+        sequences <- read.dna(fasta_file, format = "fasta")
 
-                # Construir árbol filogenético con método de máxima verosimilitud
-                arbol <- pml(alineamiento_muscle, model='HKY85');
-                arbol_optimizado <- optim.pml(arbol);
+        # Realizar el alineamiento utilizando MUSCLE
+        alignment <- muscle(sequences)
 
-                # Visualizar árbol filogenético
-                png(filename='${sam_file.baseName}_arbol.png', width=800, height=600);
-                plot(arbol_optimizado);
-                dev.off();
-                "
+        # Construir un árbol filogenético con el método Neighbor-Joining (NJ)
+        tree <- nj(dist.dna(alignment))
+
+        # Generar un archivo PNG del árbol filogenético
+        png("arbol_filogenetico.png", width = 800, height = 600)
+        plot(tree)
+        dev.off()
+        "
     """
+}
+
+process BAM_TO_FASTA {
+  input:
+  path bam_file
+
+  output:
+  path "fasta_file.fasta"
+
+  script:
+  """
+    samtools fasta ${bam_file} > fasta_file.fasta
+  """
 }
