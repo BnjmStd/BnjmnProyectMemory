@@ -35,17 +35,20 @@ process VARIANT_CALLING {
     path aligned_reads
 
     output:
-    path "variants.vcf"
+    path "variantes.vcf"
 
     script:
     """
     samtools sort $aligned_reads -o mapa.bwa.sort.bam
     samtools index mapa.bwa.sort.bam
-    samtools mpileup -g -f $fasta_file mapa.bwa.sort.bam > map.mpileup.bcf
     
+   
+    bcftools mpileup -Ou -f $fasta_file mapa.bwa.sort.bam | bcftools call -mv -Ov -o variantes.vcf
+
     """
 }
-
+//  bcftools mpileup -Ou -f $fasta_file mapa.bwa.sort.bam | bcftools call -mv -Ob -o variantes.bcf
+// bcftools mpileup -g -f $fasta_file mapa.bwa.sort.bam > map.mpileup.bcf
 // freebayes -f $fasta_file $aligned_reads > variants.vcf
 
 process PNG_VARIANT_CALLING {
@@ -58,11 +61,15 @@ process PNG_VARIANT_CALLING {
   script:
 
   """
-    Rscript -e "library(vcfR);
-                vcf_data <- read.vcfR('$vcf');
-                vcf_matrix <- as.matrix(vcf_data@gt);
-                png('output.png', width=800, height=600);
-                heatmap(vcf_matrix);
-                dev.off();"
+    Rscript -e "
+            library(vcfR)
+
+            # Lee el archivo VCF
+            vcf_file <- '$vcf'
+            vcf <- read.vcfR(vcf_file, verbose = FALSE)
+
+            # Create a chromR object.
+            chrom <- create.chromR(name="Supercontig", vcf=vcf, verbose=TRUE)
+            "
   """
 }

@@ -37,17 +37,6 @@ RUN wget -O /tmp/bowtie2.tar.gz https://github.com/BenLangmead/bowtie2/releases/
 # Agregar directorio de Bowtie2 al PATH
 ENV PATH="/usr/local/bin/bowtie2-2.4.4-linux-x86_64:${PATH}"
 
-# Descargar e instalar GATK
-RUN wget "https://github.com/broadinstitute/gatk/releases/download/4.2.0.0/gatk-4.2.0.0.zip" && \
-    unzip gatk-4.2.0.0.zip && \
-    mv gatk-4.2.0.0 /usr/local/bin/gatk && \
-    chmod +x /usr/local/bin/gatk/gatk && \
-    rm gatk-4.2.0.0.zip && \
-    ln -s /usr/bin/python3 /usr/bin/python
-
-# Agregar directorio de GATK al PATH
-ENV PATH="/usr/local/bin/gatk:${PATH}"
-
 # Instalar Kraken2 manualmente
 RUN wget -O /tmp/kraken2.tar.gz https://github.com/DerrickWood/kraken2/archive/refs/tags/v2.1.2.tar.gz && \
     tar -zxvf /tmp/kraken2.tar.gz -C /usr/local/bin && \
@@ -106,5 +95,41 @@ RUN wget https://github.com/ropensci/rentrez/archive/refs/heads/master.tar.gz &&
 # Instala los paquetes stringr y ape en R
 RUN R -e "install.packages(c('stringr', 'ape'), repos='http://cran.rstudio.com/')"
 
+RUN apt-get update && apt-get install -y autoconf
+
+# Instala VCFtools desde el código fuente
+RUN git clone https://github.com/vcftools/vcftools.git && \
+    cd vcftools && \
+    ./autogen.sh && \
+    ./configure && \
+    make && \
+    make install
+
+RUN git clone https://github.com/lh3/bwa.git && \
+    cd bwa && \
+    make
+
+# Descarga Picard Tools desde GitHub y establece los permisos de ejecución
+RUN wget https://github.com/broadinstitute/picard/releases/download/2.26.5/picard.jar -O /usr/local/bin/picard.jar && \
+    chmod +x /usr/local/bin/picard.jar
+
+# vcflib
+RUN apt-get install -y libvcflib-tools libvcflib-dev
+
+# Agrega el repositorio de Ubuntu
+RUN echo "deb http://cz.archive.ubuntu.com/ubuntu jammy main universe" >> /etc/apt/sources.list
+
+# Actualiza la lista de paquetes e instala freebayes
+RUN apt-get update && \
+    apt-get install -y freebayes
+
+# Instalar paquetes de R
+RUN R -e "install.packages('vcfR', repos='http://cran.rstudio.com/')"
+
+RUN apt-get update && \
+    apt-get install -y bcftools
+    
 # Establecer el directorio de trabajo
 WORKDIR /workspace
+
+# java -jar /usr/local/bin/picard.jar
