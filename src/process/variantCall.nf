@@ -41,35 +41,35 @@ process VARIANT_CALLING {
     """
     samtools sort $aligned_reads -o mapa.bwa.sort.bam
     samtools index mapa.bwa.sort.bam
-    
-   
     bcftools mpileup -Ou -f $fasta_file mapa.bwa.sort.bam | bcftools call -mv -Ov -o variantes.vcf
-
     """
 }
 //  bcftools mpileup -Ou -f $fasta_file mapa.bwa.sort.bam | bcftools call -mv -Ob -o variantes.bcf
 // bcftools mpileup -g -f $fasta_file mapa.bwa.sort.bam > map.mpileup.bcf
 // freebayes -f $fasta_file $aligned_reads > variants.vcf
 
-process PNG_VARIANT_CALLING {
+process FILTROS_SNP {
+  input:
+  path variants
+ 
+  output:
+  path "SNPs_only.recode.vcf"
+
+  script:
+  """
+  vcftools --vcf $variants --remove-indels --recode --out SNPs_only
+  """
+}
+
+process REPORT_VARIANT_CALLING {
   input:
   path vcf
   
   output:
-  file 'output.png'
+  file 'resumen.txt'
   
   script:
-
   """
-    Rscript -e "
-            library(vcfR)
-
-            # Lee el archivo VCF
-            vcf_file <- '$vcf'
-            vcf <- read.vcfR(vcf_file, verbose = FALSE)
-
-            # Create a chromR object.
-            chrom <- create.chromR(name="Supercontig", vcf=vcf, verbose=TRUE)
-            "
+  bcftools stats $vcf > resumen.txt
   """
 }

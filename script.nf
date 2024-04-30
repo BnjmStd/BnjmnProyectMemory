@@ -64,6 +64,7 @@ include { kraken2_taxonomy } from './src/workflows/kraken2.nf'
 include { amrFinder_workflow } from './src/workflows/amrFinder.nf'
 include { variant_calling } from './src/workflows/variantCalling.nf'
 include { phylogenetic_graph } from './src/workflows/phylogenetic.nf'
+include { reporte } from './src/workflows/reportes.nf'
 
 if(!nextflow.version.matches('>=23.0')) {
     println "This workflow requires Nextflow version 20.04 or greater and you are running version $nextflow.version"
