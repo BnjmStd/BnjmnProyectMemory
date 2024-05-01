@@ -37,6 +37,8 @@ params.type = null
 params.dbdownload = null
 /* análisis filogenético */
 params.phylogenetic = null
+/* anotación funcionarl */
+params.annotation = null
 
 /* process */ 
 include { DOWNLOAD_DECOMPRESS_DBKRAKEN2 } from './src/process/downloadDBKraken2.nf'
@@ -63,8 +65,9 @@ include { fastqc_review } from './src/workflows/fastqc.nf'
 include { kraken2_taxonomy } from './src/workflows/kraken2.nf'
 include { amrFinder_workflow } from './src/workflows/amrFinder.nf'
 include { variant_calling } from './src/workflows/variantCalling.nf'
-include { phylogenetic_graph } from './src/workflows/phylogenetic.nf'
-include { reporte } from './src/workflows/reportes.nf'
+// include { phylogenetic_graph } from './src/workflows/phylogenetic.nf'
+// include { reporte } from './src/workflows/reportes.nf'
+include { annotation } from './src/workflows/annotation.nf'
 
 if(!nextflow.version.matches('>=23.0')) {
     println "This workflow requires Nextflow version 20.04 or greater and you are running version $nextflow.version"
@@ -80,6 +83,7 @@ if (params.fastqc) {
 def cantidadArchivos = null
 
 workflow {
+
     if (params.f == null && params.path != null) {
         check_directory(params.path)
         cantidadArchivos = countFiles(params.path)
@@ -209,12 +213,14 @@ workflow {
         }
     }
 
-    /* phylogenetic */
+    /* phylogenetic 
     if ((params.phylogenetic != null) && (params.spades != null) && (flag == false)) {
         spades_result  
         fasta = spades_result.flatMap { it.listFiles() }.filter{ it.name == 'scaffolds.fasta' }
         phylogenetic_graph(fasta)
     } 
+    
+    */
 
     /* variantCalling*/
     if ((params.variantCall != null) && (params.spades != null) && flag == false) {
@@ -248,6 +254,13 @@ workflow {
         check_directory(file(params.db))
         kraken2_taxonomy(params.db, fasta)
     }
+    
+    /* anotación funcional */
+    if ((params.annotation != null) && (params.spades != null) && (flag == false)) {
+        spades_result  
+        fasta = spades_result.flatMap { it.listFiles() }.filter{ it.name == 'scaffolds.fasta' }
+        annotation(fasta, params.variantRef)
+    }
 
     /* Identificación de ARG */
     if ((params.amrFinder != null) && (params.type != null) && (params.spades != null) && (flag == false)){
@@ -259,7 +272,8 @@ workflow {
     }
 
     /* Análisis con un fasta de entrada */
-    /*Identificación taxonomica*/
+
+    /* Identificación taxonomica */
     if (params.f != null && params.kraken != null && flag == false) {
         if (!params.db) {
             throw new Error('db no ingresada')
@@ -274,8 +288,16 @@ workflow {
     if ((params.f != null) && (params.amrFinder != null) && (params.type != null) && (flag == false)) {
         amrFinder_workflow(params.organism, params.type, file(params.f))
     }
-    
-    /* anotación funcional */
+
+    /* anotación */
+    if ((params.f != null) && (params.annotation != null) && (params.type != null) && (flag == false)) {
+        amrFinder_workflow(params.organism, params.type, file(params.f))
+    }
+
+    /* llamado de variantes */
+    if ((params.f != null) && (params.variantCall != null) && (flag == false)) {
+        amrFinder_workflow(params.organism, params.type, file(params.f))
+    }
 
 
     /* Reporte final */

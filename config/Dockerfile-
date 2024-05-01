@@ -128,7 +128,49 @@ RUN R -e "install.packages('vcfR', repos='http://cran.rstudio.com/')"
 
 RUN apt-get update && \
     apt-get install -y bcftools
-    
+
+# Instalar dependencias
+RUN apt-get update && apt-get install -y \
+    libdatetime-perl \
+    libxml-simple-perl \
+    libdigest-md5-perl \
+    git \
+    default-jre \
+    bioperl
+
+# Instalar BioPerl usando cpan
+RUN cpan Bio::Perl
+
+# Descargar el paquete libidn11
+WORKDIR /downloads
+RUN apt install -y wget && \
+    wget http://mirrors.kernel.org/ubuntu/pool/main/libi/libidn/libidn11_1.33-2.2ubuntu2_amd64.deb
+
+# Instalar el paquete libidn11
+RUN apt install -y ./libidn11_1.33-2.2ubuntu2_amd64.deb
+
+######################################
+######################################
+######################################
+######################################
+RUN apt-get install -y python3-pip python3-venv
+RUN wget https://files.pythonhosted.org/packages/47/00/175bbbed1622d73778882b66f280fce8b1914bdbd7337dee91c8790becd9/resfinder-4.5.0.tar.gz && \
+    tar -xzvf resfinder-4.5.0.tar.gz
+
+RUN python3 -m venv myenv && \
+    . myenv/bin/activate && \
+    myenv/bin/pip install ./resfinder-4.5.0
+
+# Clonar las bases de datos de ResFinder
+RUN git clone https://bitbucket.org/genomicepidemiology/resfinder_db/ \
+    && git clone https://bitbucket.org/genomicepidemiology/pointfinder_db/ \
+    && git clone https://bitbucket.org/genomicepidemiology/disinfinder_db/
+
+######################################
+######################################
+######################################
+######################################
+
 # Establecer el directorio de trabajo
 WORKDIR /workspace
 
