@@ -1,9 +1,9 @@
-include { VARIANT_CALLING } from '../process/variantCall.nf'
-include { SAM_TO_BAM } from '../process/variantCall.nf'
-include { DOWNLOADREF } from '../process/downloadRef.nf'
-include { REPORT_VARIANT_CALLING } from '../process/variantCall.nf'
-include { ALIGNMENT_AND_INDEX } from '../process/variantCall.nf'
-include { FILTROS_SNP } from '../process/variantCall.nf'
+include { VARIANT_CALLING } from "${params.procces_in_workflow}/variantCall.nf"
+include { SAM_TO_BAM } from "${params.procces_in_workflow}/variantCall.nf"
+include { DOWNLOADREF } from "${params.procces_in_workflow}/downloadRef.nf"
+include { REPORT_VARIANT_CALLING } from "${params.procces_in_workflow}/variantCall.nf"
+include { ALIGNMENT_AND_INDEX } from "${params.procces_in_workflow}/variantCall.nf"
+include { FILTROS_SNP } from "${params.procces_in_workflow}/variantCall.nf"
 
 workflow variant_calling_workflow {
     take:

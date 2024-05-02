@@ -1,4 +1,4 @@
-include { FASTQC } from '../process/preprocessing.nf'
+include { FASTQC } from "${params.procces_in_workflow}/preprocessing.nf"
 
 /* Flujo de trabajo para todos
 los procesos de evaluación de calidad */

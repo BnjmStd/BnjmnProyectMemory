@@ -1,9 +1,9 @@
 /* Identificación de ARG */
-include { AMRFINDER } from '../process/arg_process.nf'
-include { AMRFINDER_ORGANISM } from '../process/arg_process.nf'
+include { AMRFINDER } from "${params.procces_in_workflow}/arg_process.nf"
+include { AMRFINDER_ORGANISM } from "${params.procces_in_workflow}/arg_process.nf"
 
 /* services */
-include { check_organism_services } from '../services/check_organism.nf'
+include { check_organism_services } from "${services_in_workflow}/check_organism.nf"
 
 workflow arg_workflow {
     take:

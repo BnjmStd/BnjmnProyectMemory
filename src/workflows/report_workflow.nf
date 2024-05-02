@@ -1,8 +1,6 @@
 
 workflow report_workflow {
-    take:
     
-
     main:
     /*
     1. trimmo spades analisis
@@ -10,6 +8,8 @@ workflow report_workflow {
     3. trimmo spades
     4. trimmo
     */
+
+
     
 
     /*

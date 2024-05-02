@@ -1,11 +1,8 @@
-/* Descarga inicial */
-include { SRA_TOOLKIT_PAIRS } from '../process/get_sra.nf'
-include { SRA_TOOLKIT } from '../process/get_sra.nf'
+include { SRA_TOOLKIT_PAIRS } from "${params.procces_in_workflow}/get_sra.nf"
+include { SRA_TOOLKIT } from "${params.procces_in_workflow}/get_sra.nf"
 
-include { check_sra_id_services } from '../services/check_sra_id.nf'
+include { check_sra_id_services } from "${services_in_workflow}/check_sra_id.nf"
 
-/* Flujo de trabajo para 
-descargar archivos FASTQ */
 workflow initial_download_workflow {
     main:
         check_sra_id_services(params.id_sra)    
