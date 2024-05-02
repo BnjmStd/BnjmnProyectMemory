@@ -1,73 +1,31 @@
 #!/usr/bin/env nextflow
 
-/* params */
-params.path = null
-params.fastqc = null
-params.spades = null
-params.f = null
-/* params sra toolkit */
-params.id_sra = null
-params.pairs = null 
-params.x = 500
-/* params trimmomatic  */
-params.trimmo = null
-params.threads = 1
-params.phred = null
-params.trimlog = null
-params.summary = null
-params.illuminaAdapter = null
-params.leading = null
-params.trailing = null
-params.slidingwindow = null
-params.minlen = null
-/* params SPAdes */
-params.phred_offset = ''
-/* params Llamado de variante */
-params.variantCall = null
-params.variantRef = null
-params.variantRefId = null
-/* params para kraken2 */
-params.kraken = null
-params.db = null
-/* amrFinder */
-params.amrFinder = null
-params.organism = null
-params.type = null
-/*  download kraken2db */
-params.dbdownload = null
-/* análisis filogenético */
-params.phylogenetic = null
-/* anotación funcionarl */
-params.annotation = null
-
 /* process */ 
-include { DOWNLOAD_DECOMPRESS_DBKRAKEN2 } from './src/process/downloadDBKraken2.nf'
+include { DOWNLOAD_DECOMPRESS_DBKRAKEN2 } from "${params.process}/downloadDBKraken2.nf"
 /* Evaluación de calidad */
-include { TRIMMO_PE } from './src/process/preprocessing.nf'
-include { TRIMMO_SE } from './src/process/preprocessing.nf'
-include { UNZIPFILE } from './src/process/decompress.nf'
+include { TRIMMO_PE } from "${params.process}/preprocessing.nf"
+include { TRIMMO_SE } from "${params.process}/preprocessing.nf"
+include { UNZIPFILE } from "${params.process}/decompress.nf"
 /* Ensamble y alineamiento */
-include { SPADES_SE } from './src/process/assembly.nf'
-include { SPADES_PE } from './src/process/assembly.nf'
+include { SPADES_SE } from "${params.process}/assembly.nf"
+include { SPADES_PE } from "${params.process}/assembly.nf"
 
 /* Services */
-include { check_file } from './src/services/check_files_exist.nf'
-include { check_directory } from './src/services/check_path_exist.nf'
-include { countFiles } from './src/services/countFiles.nf'
-include { validarFasta } from './src/services/validFasta.nf'
-include { check_id } from './src/services/check_id.nf'
-include { checkIluminaClip } from './src/services/check_iluminaClip.nf'
-include { validarColeccion } from './src/services/check_db_download.nf'
+include { check_directory_services } from "${params.services}/check_path_exist.nf"
+include { count_files_services } from "${params.services}/check_count_files.nf"
+include { validar_fasta_services } from "${params.services}/check_fasta.nf"
+include { check_id_services } from "${params.services}/check_id.nf"
+include { check_ilumina_clip_services } from "${params.services}/check_ilumina_clip.nf"
+include { check_db_collection_services } from "${params.services}/check_db_download.nf"
 
 /* Flujos de trabajo */
-include { initialDownload } from './src/workflows/initialDownload.nf'
-include { fastqc_review } from './src/workflows/fastqc.nf'
-include { kraken2_taxonomy } from './src/workflows/kraken2.nf'
-include { amrFinder_workflow } from './src/workflows/amrFinder.nf'
-include { variant_calling } from './src/workflows/variantCalling.nf'
-// include { phylogenetic_graph } from './src/workflows/phylogenetic.nf'
-// include { reporte } from './src/workflows/reportes.nf'
-include { annotation } from './src/workflows/annotation.nf'
+include { initial_download_workflow } from "${params.workflows}/initial_download_workflow.nf"
+include { fastqc_review_workflow } from "${params.workflows}/fastqc_workflow.nf"
+include { taxonomy_workflow } from "${params.workflows}/taxonomy_workflow.nf"
+include { arg_workflow } from "${params.workflows}/arg_workflow.nf"
+include { variant_calling_workflow } from "${params.workflows}/variant_calling_workflow.nf"
+include { annotation_workflow } from "${params.workflows}/annotation_workflow.nf"
+// include { report_workflow } from './src/workflows/report_workflow.nf'
 
 if(!nextflow.version.matches('>=23.0')) {
     println "This workflow requires Nextflow version 20.04 or greater and you are running version $nextflow.version"
@@ -85,14 +43,14 @@ def cantidadArchivos = null
 workflow {
 
     if (params.f == null && params.path != null) {
-        check_directory(params.path)
-        cantidadArchivos = countFiles(params.path)
+        check_directory_services(params.path)
+        cantidadArchivos = count_files_services(params.path)
 
         /* sra toolkit */
         if (cantidadArchivos == 0 && params.id_sra == null) {
             throw new Error ('Faltan parámetros')
         } else if (cantidadArchivos == 0 && params.id_sra != null) {
-            initialDownload()
+            initial_download_workflow()
         } else if  (cantidadArchivos > 0 && params.id_sra != null) {
             throw new Error ('El directorio no está vacio ')
         } else if (cantidadArchivos > 0  && params.id_sra == null ) {
@@ -114,26 +72,26 @@ workflow {
         }
 
         if (cantidadArchivos > 0 && params.fastqc != null) {
-            fastqc_review(files, flag)
+            fastqc_review_workflow(files, flag)
         }
 
     } else if (params.f != null && params.path == null) {
-        validarFasta(params.f)
+        validar_fasta_services(params.f)
 
     } else if (params.f != null && params.path != null) {
-        throw new Error('No se puede ejecutar --f y --path juntos')
+        throw new Error('Cant run --f and --path together')
     
     } else if (params.f == null && params.path == null) {
         if (params.dbdownload) {
             if (params.dbdownload == true) {
-                throw new Error ('Falta colección')
+                throw new Error ('Database collection missing')
             } else {
                 /* valido que la bd exista*/
-                def x = validarColeccion(params.dbdownload)
+                def x = check_db_collection_services(params.dbdownload)
                 DOWNLOAD_DECOMPRESS_DBKRAKEN2(x)
             }
         } else {
-            throw new Error('Faltan parámetros importantes.')
+            throw new Error('Important parameters are missing')
         }
     }
 
@@ -151,7 +109,7 @@ workflow {
         def minlen = params.minlen ? "MINLEN:${params.minlen}" : ''
 
         if (params.illuminaAdapter) {
-            checkIluminaClip(params.illuminaAdapter)
+            check_ilumina_clip_services(params.illuminaAdapter)
         }
 
         def illuminaAdapter = params.illuminaAdapter ? "ILLUMINACLIP:/usr/share/trimmomatic/${params.illuminaAdapter}" : ''
@@ -168,7 +126,7 @@ workflow {
                 .set { archivos_separados }
 
             } else if (cantidadArchivos % 2 != 0 && params.trimmo.toLowerCase() == 'pe') {
-                throw new Error('La cantidad de archivos no facilita la creación de librerias')
+                throw new Error('The number of files does not facilitate the creation of libraries')
             } else if (cantidadArchivos % 2 != 0 && params.trimmo.toLowerCase() == 'se') {
                 
                 trimmo_result = TRIMMO_SE(files, threads, phred, trimlog, summary, illuminaAdapter)
@@ -179,7 +137,7 @@ workflow {
                 throw new Error('Something went wrong')
             }
         } else {
-            throw new Error('El valor del parámetro "trimmo" debe ser "SE" o "PE"\n')
+            throw new Error('The value of the "trimmo" parameter must be "SE" or "PE"\n')
         }
     }
 
@@ -213,96 +171,120 @@ workflow {
         }
     }
 
-    /* phylogenetic 
-    if ((params.phylogenetic != null) && (params.spades != null) && (flag == false)) {
-        spades_result  
-        fasta = spades_result.flatMap { it.listFiles() }.filter{ it.name == 'scaffolds.fasta' }
-        phylogenetic_graph(fasta)
-    } 
-    
-    */
-
     /* variantCalling*/
     if ((params.variantCall != null) && (params.spades != null) && flag == false) {
         // ok si paso, valido la ref
+        spades_result /* need it */
         if (params.variantRef) {
             // ok, valido la ref y ahora valido que es una ref (Fasta)
-            validarFasta(params.variantRef) 
-            spades_result /* need it */
+            validar_fasta_services(params.variantRef) 
             fasta = spades_result.flatMap { it.listFiles() }.filter{ it.name == 'scaffolds.fasta' }
-            variant_calling(params.variantRef, fasta)
+            variant_calling_workflow(params.variantRef, fasta)
             
-        } else if (params.variantRef == null && params.variantRefId != null) {
+        } else if ((params.variantRef == null) && (params.variantRefId != null)) {
             /* valido el id del genoma para proceder a descargar */
-            check_id(params.variantRefId)
+            check_id_services(params.variantRefId)
             /* ya que lo tengo descargo el genoma con R y rentrez*/
-            DOWNLOADREF(params.variantRefId)
+            ref =  DOWNLOADREF(params.variantRefId)
+            fasta = spades_result.flatMap { it.listFiles() }.filter{ it.name == 'scaffolds.fasta' }
+            variant_calling_workflow(ref, fasta)
         } else {
-            throw new Error('Ingrese un genoma de ref ')
+            throw new Error('Enter a reference genome')
         }
     }
 
     /* identificación taxonómica */
-    if ((params.kraken != null) && (params.spades != null) && (flag == false)){
+    if ((params.taxonomy  != null) && (params.spades != null) && (flag == false)){
         /* proceso de kraken */
         if (!params.db) {
-            throw new Error('db no ingresada')
+            throw new Error('database value is missing')
         }
-        spades_result        
+        spades_result
         fasta = spades_result.flatMap { it.listFiles() }.filter{ it.name == 'scaffolds.fasta' }
         /* TO DO: TENGO UN PROBLEMA CON LA RUTA, HAY QUE ENTREGARLE UNA ABSOLUTA*/
-        check_directory(file(params.db))
-        kraken2_taxonomy(params.db, fasta)
+        check_directory_services(file(params.db))
+        taxonomy_workflow(params.db, fasta)
     }
     
     /* anotación funcional */
     if ((params.annotation != null) && (params.spades != null) && (flag == false)) {
         spades_result  
         fasta = spades_result.flatMap { it.listFiles() }.filter{ it.name == 'scaffolds.fasta' }
-        annotation(fasta, params.variantRef)
+        annotation_workflow(fasta, params.variantRef)
     }
 
     /* Identificación de ARG */
-    if ((params.amrFinder != null) && (params.type != null) && (params.spades != null) && (flag == false)){
+    if ((params.arg != null) && (params.type != null) && (params.spades != null) && (flag == false)){
         spades_result
         fasta_ = spades_result.flatMap { it.listFiles() }.filter{ it.name == 'scaffolds.fasta' }
-        amrFinder_workflow(params.organism, params.type, fasta_)
-    } else if ( (params.amrFinder != null) && (params.type == null) ) {
-        throw new Error('Falta ingresar el parámetro --type')
-    }
-
-    /* Análisis con un fasta de entrada */
-
-    /* Identificación taxonomica */
-    if (params.f != null && params.kraken != null && flag == false) {
-        if (!params.db) {
-            throw new Error('db no ingresada')
-        }
-
-        /* TO DO: TENGO UN PROBLEMA CON LA RUTA, HAY QUE ENTREGARLE UNA ABSOLUTA*/
-        check_directory(file(params.db))
-        kraken2_taxonomy(params.db, file(params.f))
+        arg_workflow(params.organism, params.type, fasta_)
+    } else if ( (params.arg != null) && (params.type == null) ) {
+        throw new Error('The --type parameter is missing')
     }
     
-    /* ARG */
-    if ((params.f != null) && (params.amrFinder != null) && (params.type != null) && (flag == false)) {
-        amrFinder_workflow(params.organism, params.type, file(params.f))
-    }
+    /* 
+    ################################
+    ################################
+    ################################
 
-    /* anotación */
-    if ((params.f != null) && (params.annotation != null) && (params.type != null) && (flag == false)) {
-        amrFinder_workflow(params.organism, params.type, file(params.f))
+    ~ Análisis con un fasta de entrada ~
+    
+    ################################
+    ################################
+    ################################
+    */ 
+
+    /* Identificación taxonomica */
+    if (params.f != null && params.taxonomy != null && flag == false) {
+        if (!params.db) {
+            throw new Error('database value is missing')
+        }
+
+        /* TO DO: TENGO UN PROBLEMA CON LA RUTA, HAY QUE ENTREGARLE UNA ABSOLUTA */
+        check_directory_services(file(params.db))
+        taxonomy_workflow(params.db, file(params.f))
     }
 
     /* llamado de variantes */
     if ((params.f != null) && (params.variantCall != null) && (flag == false)) {
-        amrFinder_workflow(params.organism, params.type, file(params.f))
+        if (params.variantRef) {
+            // ok, valido la ref y ahora valido que es una ref (Fasta)
+            validar_fasta_services(params.variantRef) 
+            variant_calling_workflow(params.variantRef, params.f)
+            
+        } else if ((params.variantRef == null) && (params.variantRefId != null)) {
+            /* valido el id del genoma para proceder a descargar */
+            check_id_services(params.variantRefId)
+            /* ya que lo tengo descargo el genoma con R y rentrez*/
+            ref =  DOWNLOADREF(params.variantRefId)
+            variant_calling_workflow(ref, params.f)
+        }
+    }
+    
+    /* ARG */
+    if ((params.f != null) && (params.arg != null) && (params.type != null) && (flag == false)) {
+        arg_workflow(params.organism, params.type, file(params.f))
     }
 
+    /* anotación */
+    if ((params.f != null) && (params.annotation != null) && (params.type != null) && (flag == false)) {
+        annotation_workflow(params.f, params.f)
+    }
 
     /* Reporte final */
+    // reporte_workflow()
 }
 
 workflow.onComplete {
-    log.info ( workflow.success ? ("\nDone!\n") : ("Oops ..") )
+    log.info ( workflow.success ? ("\ndone!\n") : ("Oops ..") )
 }
+
+/* phylogenetic 
+include { phylogenetic_graph } from './src/workflows/phylogenetic.nf'
+
+if ((params.phylogenetic != null) && (params.spades != null) && (flag == false)) {
+    spades_result  
+    fasta = spades_result.flatMap { it.listFiles() }.filter{ it.name == 'scaffolds.fasta' }
+    phylogenetic_graph(fasta)
+} 
+*/
