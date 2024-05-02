@@ -1,4 +1,4 @@
-def check_id(id) {
+def check_id_services(id) {
     if (id == true) {
         throw new Error("No se asigno un Id para descargar la ref")
     }

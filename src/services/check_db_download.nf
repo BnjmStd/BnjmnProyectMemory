@@ -1,4 +1,4 @@
-def validarColeccion(String nombreColeccion) {
+def check_db_collection_services(String nombreColeccion) {
     def colecciones = [
         "Viral": "https://genome-idx.s3.amazonaws.com/kraken/k2_viral_20240112.tar.gz",
         "MinusB": "https://genome-idx.s3.amazonaws.com/kraken/k2_minusb_20240112.tar.gz",

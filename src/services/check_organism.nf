@@ -1,4 +1,4 @@
-def check_organism(String organismo) {
+def check_organism_services(String organismo) {
     def organismos = [
         "Acinetobacter_baumannii",
         "Burkholderia_cepacia",

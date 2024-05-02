@@ -1,4 +1,4 @@
-def check_directory(path) {
+def check_directory_services(path) {
     try {
         if (path) {
             if (path.toString() instanceof String) { // Verifica si path es una cadena

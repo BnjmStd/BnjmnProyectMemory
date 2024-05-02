@@ -1,5 +1,5 @@
 // check file exist uwu
-def check_file(files) {
+def check_file_services(files) {
     try {
         if (files) {
             if (files.toString()) {
