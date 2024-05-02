@@ -25,7 +25,7 @@ include { taxonomy_workflow } from "${params.workflows}/taxonomy_workflow.nf"
 include { arg_workflow } from "${params.workflows}/arg_workflow.nf"
 include { variant_calling_workflow } from "${params.workflows}/variant_calling_workflow.nf"
 include { annotation_workflow } from "${params.workflows}/annotation_workflow.nf"
-// include { report_workflow } from './src/workflows/report_workflow.nf'
+include { report_workflow } from "${params.workflows}/report_workflow.nf"
 
 if(!nextflow.version.matches('>=23.0')) {
     println "This workflow requires Nextflow version 20.04 or greater and you are running version $nextflow.version"
@@ -272,7 +272,7 @@ workflow {
     }
 
     /* Reporte final */
-    // reporte_workflow()
+    reporte_workflow()
 }
 
 workflow.onComplete {

@@ -256,6 +256,15 @@ La lista de todas las dependencias y requisitos de software.
 
 [Nombre del archivo](ruta/del/archivo)
 
+<details>
+<summary>Click para ver los detalles</summary>
+
+Aquí puedes escribir el contenido que deseas mostrar cuando se haga clic en "Ver detalles".
+
+Puedes incluir cualquier texto, listas, imágenes u otros elementos de Markdown aquí.
+
+</details>
+
 
 ## Detalles sobre las versiones específicas de las herramientas utilizadas.
 # Solución de Problemas:
@@ -275,3 +284,5 @@ La lista de todas las dependencias y requisitos de software.
 ## Contribuir
 
 ## Licencia 
+
+ nextflow run script.nf --path misc/mocks/ --trimmo pe --threads 2 --leading 3 --slidingwindow4:15 --minlen 36 --trailing 3 --iluminaAdapter TruSeq3-PE.fa:2:30:10 --spades --variantCall --variantRef misc/ref/GCA_000005845.2_ASM584v2_genomic.fna
