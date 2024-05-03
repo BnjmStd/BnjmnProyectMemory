@@ -14,13 +14,15 @@ workflow arg_workflow {
     main:
         if (organism != null ) {
             check_organism_services(organism)
-            AMRFINDER_ORGANISM("--organism ${organism}", type, file)
+            result_arg = AMRFINDER_ORGANISM("--organism ${organism}", type, file)
         }
         if ((type.toLowerCase() == 'p') || (type.toLowerCase() == 'n')) {
             if (organism == null) {
-                AMRFINDER(type, file)
+                result_arg = AMRFINDER(type, file)
             }
         } else {
             throw new Error('Params.type inválido')
         }
+    emit:
+    result_arg
 }

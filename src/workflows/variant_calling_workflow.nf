@@ -15,4 +15,6 @@ workflow variant_calling_workflow {
         resultVariantCalling = VARIANT_CALLING(file(fasta_ref), bam_alineamiento)
         only_snp =  FILTROS_SNP(resultVariantCalling)
         png =  REPORT_VARIANT_CALLING(only_snp)
+    emit:
+    png
 }

@@ -9,5 +9,8 @@ workflow annotation_workflow {
 
     main:
         x = BLASTN(fasta, file(fasta_ref))
-        REPORT_ANNOTATION(x)
+        result_annotation = REPORT_ANNOTATION(x)
+
+    emit:
+    result_annotation
 }

@@ -1,5 +1,6 @@
 process REPORT_ENDING {
   input:
+  path value
   path direct 
   
   output:

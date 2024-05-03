@@ -8,5 +8,8 @@ workflow taxonomy_workflow {
     file 
 
     main:
-    KRAKEN2(db, file)
+    result_taxonomy = KRAKEN2(db, file)
+
+    emit:
+    result_taxonomy
 }
