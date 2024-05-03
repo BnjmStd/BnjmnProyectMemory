@@ -148,7 +148,7 @@ Se puede usar el parámetro `--trimmo` & `--spades`, ejemplo de uso:
 
 Para la identificación Taxonómica se utiliza Kraken2, hay varias maneras de lograr generar el análisis:
 
-Ejecutar kraken2 junto a un preprocesamiento y ensamble:
+Ejecutar análisis taxonomico junto a un preprocesamiento y ensamble:
 
 ```bash
     nextflow run script.nf --path [directorio] \
@@ -159,13 +159,13 @@ Ejecutar kraken2 junto a un preprocesamiento y ensamble:
         --slidingwindow 4:15 \        
         --minlen 36 \
         --spades \
-        --kraken \
+        --taxonomy \
         --db [ruta de la base de datos]
 ```
 > [!WARNING]
 > Se recomienda usar una ruta para la base de datos absoluta. Ejecute `$pwd` para conocerla.
 
-- Ejecutar kraken2 a través de un fasta:
+- Ejecutar análisis taxonómico a través de un fasta:
 
 ```bash
     nextflow run script.nf --f [archivo fasta] \
@@ -180,7 +180,7 @@ Ejecutar kraken2 junto a un preprocesamiento y ensamble:
 
 Para realizar la identificación de genes de resistencia antibióticos se utiliza AMRFinder.
 
-- Para ejecutar AMRFinder junto a un preprocesamiento y ensamble: 
+- Para ejecutar un análsis de resistencia antibiótica junto a un preprocesamiento y ensamble: 
 
 ```bash
     nextflow run script.nf --path [directorio] \
@@ -191,7 +191,7 @@ Para realizar la identificación de genes de resistencia antibióticos se utiliz
         --slidingwindow 4:15 \        
         --minlen 36 \
         --spades \  
-        --amrFinder \
+        --arg \
         --organism Acinetobacter_baumannii \
         --type p
 ```
@@ -232,50 +232,110 @@ Para el parámetro `type`, se aceptan las siguientes opciones:
 - n: normal
 - p: pathogenic
 
-Ejemplo de ejecución de AMRFinder a través de un archivo Fasta:
+Ejemplo de ejecución de un análisis de resistencia antibiótica a través de un archivo Fasta:
 
 ```bash
 nextflow run script.nf --f [archivo fasta] \
-    --amrFinder \
+    --arg \
     --organism Acinetobacter_baumannii \
     --type p
 ```
 
 ### Llamado de variantes
+Para realizar un llamado de variantes junto a un ensamble de bacterias ejecute:
+
+```bash 
+ nextflow run script.nf --path [directorio]\ 
+    --trimmo pe \
+    --threads 2 \
+    --leading 3 \
+    --slidingwindow4:15 \
+    --minlen 36 \ 
+    --trailing 3 \
+    --iluminaAdapter TruSeq3-PE.fa:2:30:10 \
+    --spades \ 
+    --variantCall \
+    --variantRef [ruta del genoma de referencia]
+
+```
+
+>[!IMPORTANT]
+> Si usted no tiene un genoma de referencia para su organismo, pero si presenta un código de ~/NC_\d{6}/ ejecute `--variantRefId`
+
+Para ejecutar un análisis rápido de llamado de variantes ejecute: 
+
+```bash 
+ nextflow run script.nf --f [fasta] \
+    --variantCall \
+    --variantRef [ruta del genoma de referencia]
+```
 
 ### Anotación funcional
 
+Para realizar una anotación funcional junto a un ensamble ejecute:
+
+```bash 
+ nextflow run script.nf --path [directorio]\ 
+    --trimmo pe \
+    --threads 2 \
+    --leading 3 \
+    --slidingwindow4:15 \
+    --minlen 36 \ 
+    --trailing 3 \
+    --iluminaAdapter TruSeq3-PE.fa:2:30:10 \
+    --spades \ 
+    --annotation \
+    --refannotation
+```
+
+>[!IMPORTANT]
+> `--annotation` es para indicarle al flujo de trabajo que desea realizar ese análisis pero, si no ingresa un `--refannotation` no se tendrá con qué anotar.
+
+Para ejecutar un análisis rápido de anotación funcional ejecute: 
+
+```bash 
+ nextflow run script.nf --f [fasta] \
+    --annotation \
+    --refannotation
+```
+
+## Ejemplo de uso:
+
+Este ejemplo demuestra la ejecución de 4 análisis a partir de un directorio con datos de trabajo `paired`.
+
+```
+ nextflow run script.nf --path misc/mocks/ \
+ --trimmo pe \
+ --threads 2 \
+ --leading 3 \
+ --slidingwindow4:15 \
+ --minlen 36 \
+ --trailing 3 \
+ --iluminaAdapter TruSeq3-PE.fa:2:30:10 \
+ --spades \
+ --variantCall \
+ --variantRef misc/ref/GCA_000005845.2_ASM584v2_genomic.fna \
+ --taxonomy --db /workspace/misc/db/db/ \ 
+ --annotation \
+ --arg \
+ --type n 
+```
+
 ## Reporte
+>[!IMPORTANT]
+> El flujo de trabajo desplega un informe resumen en formato pdf pero este no elimina los output de los flujos de trabajo. Estos estarán disponibles la carpeta `work`
 
 # Configuración Avanzada:
-## Detalles sobre cómo personalizar la configuración del pipeline.
-## Explicación de cómo modificar parámetros, cambiar flujos de trabajo o agregar nuevas funcionalidades.
-# Dependencias y Requisitos:
+
+Para poder configurar, directorios de trabajo diferente, porfavor especificarlo dentro del [Configuración de Nextflow](nextflow.config)
+
+## Detalles sobre las versiones específicas de las herramientas utilizadas.
 
 La lista de todas las dependencias y requisitos de software.
 
-[Nombre del archivo](ruta/del/archivo)
+[Requerimientos y dependencias](./misc/requirements.txt)
 
-<details>
-<summary>Click para ver los detalles</summary>
-
-Aquí puedes escribir el contenido que deseas mostrar cuando se haga clic en "Ver detalles".
-
-Puedes incluir cualquier texto, listas, imágenes u otros elementos de Markdown aquí.
-
-</details>
-
-
-## Detalles sobre las versiones específicas de las herramientas utilizadas.
 # Solución de Problemas:
-## Sección que aborda problemas comunes y sus soluciones.
-## Preguntas frecuentes y posibles errores durante la ejecución.
-# Contribuciones y Colaboración:
-## Instrucciones para contribuir al desarrollo del pipeline.
-## Detalles sobre cómo informar errores, enviar solicitudes de extracción, etc.
-# Referencias y Recursos Adicionales:
-# Licencia:
-## Declaración de la licencia del pipeline y cualquier software de terceros utilizado.
 
 ## Parámetro 
 
@@ -284,5 +344,3 @@ Puedes incluir cualquier texto, listas, imágenes u otros elementos de Markdown 
 ## Contribuir
 
 ## Licencia 
-
- nextflow run script.nf --path misc/mocks/ --trimmo pe --threads 2 --leading 3 --slidingwindow4:15 --minlen 36 --trailing 3 --iluminaAdapter TruSeq3-PE.fa:2:30:10 --spades --variantCall --variantRef misc/ref/GCA_000005845.2_ASM584v2_genomic.fna --taxonomy --db /workspace/misc/db/db/ --annotation --arg --type n 
