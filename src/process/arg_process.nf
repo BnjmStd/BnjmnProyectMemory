@@ -1,28 +1,32 @@
 process AMRFINDER {
+    publishDir 'report/', mode: 'copy'
+    
     input:
     val type
     path output_spades
 
     output:
-    path "amr_results.txt"
+    path "report_arg.txt"
     
     script:
     """
-    amrfinder "-$type" $output_spades > amr_results.txt
+    amrfinder "-$type" $output_spades > report_arg.txt
     """
 }
 
 process AMRFINDER_ORGANISM {
+    publishDir 'report/', mode: 'copy'
+
     input:
     val organism
     val type
     path output_spades
 
     output:
-    path "amr_results.txt"
+    path "report_arg.txt"
     
     script:
     """
-    amrfinder $organism "-$type" $output_spades > amr_results.txt
+    amrfinder $organism "-$type" $output_spades > report_arg.txt
     """
 }

@@ -13,7 +13,7 @@ process TRIMMO_PE {
     val minlen 
 
     output:
-    tuple path("${forward_fastq.baseName}_output_forward.fastq"), path("${reverse_fastq.baseName}_output_reverse.fastq")
+    path "output_dir_trimmomatic"
 
     script:
     """
@@ -22,10 +22,16 @@ process TRIMMO_PE {
         ${reverse_fastq.baseName}_output_reverse_paired.fastq ${reverse_fastq.baseName}_output_reverse_unpaired.fastq \\
         $illuminaAdapter $leading $trailing $slidingwindow $minlen
 
-    cat ${forward_fastq.baseName}_output_forward_paired.fastq ${forward_fastq.baseName}_output_forward_unpaired.fastq > ${forward_fastq.baseName}_output_forward.fastq
-    cat ${reverse_fastq.baseName}_output_reverse_paired.fastq ${reverse_fastq.baseName}_output_reverse_unpaired.fastq > ${reverse_fastq.baseName}_output_reverse.fastq
+    cat ${forward_fastq.baseName}_output_forward_paired.fastq ${forward_fastq.baseName}_output_forward_unpaired.fastq > _output_forward.fastq
+    cat ${reverse_fastq.baseName}_output_reverse_paired.fastq ${reverse_fastq.baseName}_output_reverse_unpaired.fastq > _output_reverse.fastq
     
     rm ${forward_fastq.baseName}_output_forward_paired.fastq ${forward_fastq.baseName}_output_forward_unpaired.fastq ${reverse_fastq.baseName}_output_reverse_paired.fastq ${reverse_fastq.baseName}_output_reverse_unpaired.fastq
+
+    mkdir output_dir_trimmomatic
+    mv _output_forward.fastq output_dir_trimmomatic/
+    mv _output_reverse.fastq output_dir_trimmomatic/
+    mv stats_summary.txt output_dir_trimmomatic/
+    mv trim.log output_dir_trimmomatic/
     """
 }
 
@@ -40,12 +46,32 @@ process TRIMMO_SE {
     val illuminaAdapter 
 
     output:
-    file "${k_fastq.baseName}_log.fastq"
+    path "output_dir_trimmomatic"
 
     script:
     """    
-    java -jar /usr/share/java/trimmomatic-0.39.jar SE $phred $threads $trimlog  $summary $k_fastq ${k_fastq.baseName}_log.fastq $illuminaAdapter
+    java -jar /usr/share/java/trimmomatic-0.39.jar SE $phred $threads $trimlog  $summary $k_fastq _log.fastq $illuminaAdapter
+    
+    mkdir output_dir_trimmomatic
+    mv _log.fastq output_dir_trimmomatic/
+    mv stats_summary.txt output_dir_trimmomatic/
+    mv trim.log output_dir_trimmomatic/
     """
+}
+
+process REPORT_TRIMMOMATIC {
+  publishDir 'report/', mode: 'copy'
+
+  input:
+  path directorio
+
+  output:
+  path "report_trimmomatic.txt"
+
+  script:
+  """
+    cp ${directorio}/stats_summary.txt report_trimmomatic.txt
+  """
 }
 
 process FASTQC {

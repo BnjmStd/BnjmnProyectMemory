@@ -2,14 +2,16 @@
 
 /* process */ 
 include { DOWNLOAD_DECOMPRESS_DBKRAKEN2 } from "${params.process}/downloadDBKraken2.nf"
+include { UNZIPFILE } from "${params.process}/decompress.nf"
+include { REPORT_ENDING } from "${params.process}/report.nf"
 /* Evaluación de calidad */
 include { TRIMMO_PE } from "${params.process}/preprocessing.nf"
 include { TRIMMO_SE } from "${params.process}/preprocessing.nf"
-include { UNZIPFILE } from "${params.process}/decompress.nf"
+include { REPORT_TRIMMOMATIC } from "${params.process}/preprocessing.nf"
 /* Ensamble y alineamiento */
 include { SPADES_SE } from "${params.process}/assembly.nf"
 include { SPADES_PE } from "${params.process}/assembly.nf"
-
+include { REPORT_SPADES } from "${params.process}/assembly.nf"
 /* Services */
 include { check_directory_services } from "${params.services}/check_path_exist.nf"
 include { count_files_services } from "${params.services}/check_count_files.nf"
@@ -25,7 +27,6 @@ include { taxonomy_workflow } from "${params.workflows}/taxonomy_workflow.nf"
 include { arg_workflow } from "${params.workflows}/arg_workflow.nf"
 include { variant_calling_workflow } from "${params.workflows}/variant_calling_workflow.nf"
 include { annotation_workflow } from "${params.workflows}/annotation_workflow.nf"
-//include { report_workflow } from "${params.workflows}/report_workflow.nf"
 
 if(!nextflow.version.matches('>=23.0')) {
     println "This workflow requires Nextflow version 20.04 or greater and you are running version $nextflow.version"
@@ -117,22 +118,15 @@ workflow {
         if (params.trimmo.toLowerCase() == 'se' ||  params.trimmo.toLowerCase() == 'pe') {
             if (cantidadArchivos % 2 == 0 && params.trimmo.toLowerCase() == 'pe') {
                 trimmo_result = TRIMMO_PE(files.collectFile().collate(2), threads, phred, trimlog, summary, illuminaAdapter, leading, trailing, slidingwindow, minlen, )
-
-                trimmo_result.flatten().branch { archivo ->
-                    forward: archivo.name.endsWith('_output_forward.fastq')
-                    reverse: archivo.name.endsWith('_output_reverse.fastq')
-                    otro: true
-                }
-                .set { archivos_separados }
-
+                REPORT_TRIMMOMATIC(trimmo_result)
             } else if (cantidadArchivos % 2 != 0 && params.trimmo.toLowerCase() == 'pe') {
                 throw new Error('The number of files does not facilitate the creation of libraries')
             } else if (cantidadArchivos % 2 != 0 && params.trimmo.toLowerCase() == 'se') {
-                
                 trimmo_result = TRIMMO_SE(files, threads, phred, trimlog, summary, illuminaAdapter)
-
+                REPORT_TRIMMOMATIC(trimmo_result)
             } else if (cantidadArchivos % 2 == 0 && params.trimmo.toLowerCase() == 'se') {
                 trimmo_result = TRIMMO_SE(files, threads, phred, trimlog, summary, illuminaAdapter)
+                REPORT_TRIMMOMATIC(trimmo_result)
             } else {
                 throw new Error('Something went wrong')
             }
@@ -143,29 +137,21 @@ workflow {
 
     /* ensamble de novo */
     if (params.spades) {
-        if (params.trimmo.toLowerCase() == 'pe') {
-            archivos_separados
-        }
-
         if (params.trimmo.toLowerCase() == 'se' ||  params.trimmo.toLowerCase() == 'pe') {
-            
             if (params.trimmo.toLowerCase() == 'pe') {
-                forw = archivos_separados.forward.map { it -> it.text }.collectFile(name: 'forward.fastq', newLine: true)
-                revers = archivos_separados.reverse.map { it -> it.text }.collectFile(name: 'reverse.fastq', newLine: true)
-                
+                forw = trimmo_result.flatMap { it.listFiles() }.filter{ it.name == '_output_forward.fastq' }
+                revers = trimmo_result.flatMap { it.listFiles() }.filter{ it.name == '_output_reverse.fastq' }
                 spades_result = SPADES_PE(forw, revers, params.phred_offset)
-
+                REPORT_SPADES(spades_result)
             } else if (params.trimmo.toLowerCase() == 'se') {
-                unpaired = trimmo_result.map { it -> it.text }.collectFile(name: 'unpaired.fastq', newLine: true)
-                
+                unpaired = trimmo_result.flatMap { it.listFiles() }.filter{ it.name == '_log.fastq' }
                 spades_result = SPADES_SE(unpaired, params.phred_offset)
+                REPORT_SPADES(spades_result)
             } else {
                 throw new Error ('something went wrong')
             }
-
         } else if (params.trimmo == null) {
             println ('hacer algo con params.path o files')
-        
         } else {
             throw new Error ('something went wrong')
         }
@@ -218,7 +204,7 @@ workflow {
         spades_result
         fasta_ = spades_result.flatMap { it.listFiles() }.filter{ it.name == 'scaffolds.fasta' }
         arg_workflow(params.organism, params.type, fasta_)
-    } else if ( (params.arg != null) && (params.type == null) ) {
+    } else if ((params.arg != null) && (params.type == null)) {
         throw new Error('The --type parameter is missing')
     }
     
@@ -269,14 +255,10 @@ workflow {
     if ((params.f != null) && (params.annotation != null) && (params.type != null) && (flag == false)) {
         annotation_workflow(params.f, params.f)
     }
-
-
 }
 
 workflow.onComplete {
-    /* Reporte final */
-    // reporte_workflow()
-    log.info ( workflow.success ? ("\ndone!\n") : ("Oops ..") )
+    log.info ( workflow.success ? ("\ndone!${runningTasks}\n") : ("Oops ..") )
 }
 
 /* phylogenetic 

@@ -62,14 +62,16 @@ process FILTROS_SNP {
 }
 
 process REPORT_VARIANT_CALLING {
+  publishDir 'report/', mode: 'copy'
+
   input:
   path vcf
   
   output:
-  file 'resumen.txt'
+  path 'report_variant_calling.txt'
   
   script:
   """
-  bcftools stats $vcf > resumen.txt
+  bcftools stats $vcf > report_variant_calling.txt
   """
 }

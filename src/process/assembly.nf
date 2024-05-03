@@ -26,3 +26,18 @@ process SPADES_PE {
     spades.py -o output_spades -1 ${forward_reads} -2 ${reverse_reads} $phred_offset
     """
 }
+
+process REPORT_SPADES {
+  publishDir 'report/', mode: 'copy'
+
+  input:
+  path directorio
+
+  output:
+  path "report_spades.txt"
+
+  script:
+  """
+    cat ${directorio}/params.txt <(echo) ${directorio}/warnings.log > report_spades.txt
+  """
+}

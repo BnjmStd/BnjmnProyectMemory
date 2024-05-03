@@ -285,4 +285,4 @@ Puedes incluir cualquier texto, listas, imágenes u otros elementos de Markdown 
 
 ## Licencia 
 
- nextflow run script.nf --path misc/mocks/ --trimmo pe --threads 2 --leading 3 --slidingwindow4:15 --minlen 36 --trailing 3 --iluminaAdapter TruSeq3-PE.fa:2:30:10 --spades --variantCall --variantRef misc/ref/GCA_000005845.2_ASM584v2_genomic.fna
+ nextflow run script.nf --path misc/mocks/ --trimmo pe --threads 2 --leading 3 --slidingwindow4:15 --minlen 36 --trailing 3 --iluminaAdapter TruSeq3-PE.fa:2:30:10 --spades --variantCall --variantRef misc/ref/GCA_000005845.2_ASM584v2_genomic.fna --taxonomy --db /workspace/misc/db/db/ --annotation --arg --type n 
