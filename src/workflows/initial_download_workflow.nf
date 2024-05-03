@@ -1,7 +1,7 @@
 include { SRA_TOOLKIT_PAIRS } from "${params.procces_in_workflow}/get_sra.nf"
 include { SRA_TOOLKIT } from "${params.procces_in_workflow}/get_sra.nf"
 
-include { check_sra_id_services } from "${services_in_workflow}/check_sra_id.nf"
+include { check_sra_id_services } from "${params.services_in_workflow}/check_sra_id.nf"
 
 workflow initial_download_workflow {
     main:

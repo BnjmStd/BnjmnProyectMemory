@@ -1,5 +1,5 @@
-// java -jar /usr/share/java/trimmomatic-0.39.jar
 process TRIMMO_PE {
+
     input:
     tuple path(forward_fastq), path(reverse_fastq)
     val threads
@@ -24,10 +24,13 @@ process TRIMMO_PE {
 
     cat ${forward_fastq.baseName}_output_forward_paired.fastq ${forward_fastq.baseName}_output_forward_unpaired.fastq > ${forward_fastq.baseName}_output_forward.fastq
     cat ${reverse_fastq.baseName}_output_reverse_paired.fastq ${reverse_fastq.baseName}_output_reverse_unpaired.fastq > ${reverse_fastq.baseName}_output_reverse.fastq
+    
+    rm ${forward_fastq.baseName}_output_forward_paired.fastq ${forward_fastq.baseName}_output_forward_unpaired.fastq ${reverse_fastq.baseName}_output_reverse_paired.fastq ${reverse_fastq.baseName}_output_reverse_unpaired.fastq
     """
 }
 
 process TRIMMO_SE {
+
     input:
     path k_fastq
     val threads

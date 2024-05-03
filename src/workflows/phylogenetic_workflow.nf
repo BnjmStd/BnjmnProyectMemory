@@ -8,14 +8,5 @@ workflow  phylogenetic_graph {
     fasta
 
     main:
-
-    /*
-    
-    result_alineamiento = alineamiento(fasta_ref, fasta)
-    result_bam = SAM_TO_BAM(result_alineamiento)
-    result_fasta = BAM_TO_FASTA(result_bam)
-    
-    */
-
     PHYLOGENETIC(fasta)
 }

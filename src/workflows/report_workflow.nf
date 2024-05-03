@@ -11,4 +11,10 @@ workflow report_workflow {
     */
 
 
+    /* Lo que haré es:  publishDir params.path, mode:'copy' en cada proceso final
+        controlado 
+    */
+
+    // trimmomatic primero: publishDir 'reports/trimmo', mode: 'copy' 
+
 }

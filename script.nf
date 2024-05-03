@@ -25,7 +25,7 @@ include { taxonomy_workflow } from "${params.workflows}/taxonomy_workflow.nf"
 include { arg_workflow } from "${params.workflows}/arg_workflow.nf"
 include { variant_calling_workflow } from "${params.workflows}/variant_calling_workflow.nf"
 include { annotation_workflow } from "${params.workflows}/annotation_workflow.nf"
-include { report_workflow } from "${params.workflows}/report_workflow.nf"
+//include { report_workflow } from "${params.workflows}/report_workflow.nf"
 
 if(!nextflow.version.matches('>=23.0')) {
     println "This workflow requires Nextflow version 20.04 or greater and you are running version $nextflow.version"
@@ -239,7 +239,6 @@ workflow {
         if (!params.db) {
             throw new Error('database value is missing')
         }
-
         /* TO DO: TENGO UN PROBLEMA CON LA RUTA, HAY QUE ENTREGARLE UNA ABSOLUTA */
         check_directory_services(file(params.db))
         taxonomy_workflow(params.db, file(params.f))
@@ -271,11 +270,12 @@ workflow {
         annotation_workflow(params.f, params.f)
     }
 
-    /* Reporte final */
-    reporte_workflow()
+
 }
 
 workflow.onComplete {
+    /* Reporte final */
+    // reporte_workflow()
     log.info ( workflow.success ? ("\ndone!\n") : ("Oops ..") )
 }
 
