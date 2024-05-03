@@ -1,5 +1,6 @@
 include { BLASTN } from "${params.procces_in_workflow}/annotation.nf"
 include { BLASTP } from "${params.procces_in_workflow}/annotation.nf"
+include { REPORT_ANNOTATION } from "${params.procces_in_workflow}/annotation.nf"
 
 workflow annotation_workflow {
     take:
@@ -7,5 +8,6 @@ workflow annotation_workflow {
     fasta_ref
 
     main:
-        BLASTN(fasta, file(fasta_ref))
+        x = BLASTN(fasta, file(fasta_ref))
+        REPORT_ANNOTATION(x)
 }
