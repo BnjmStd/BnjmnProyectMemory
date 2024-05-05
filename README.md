@@ -256,7 +256,6 @@ Para realizar un llamado de variantes junto a un ensamble de bacterias ejecute:
     --spades \ 
     --variantCall \
     --variantRef [ruta del genoma de referencia]
-
 ```
 
 >[!IMPORTANT]
@@ -325,6 +324,10 @@ Este ejemplo demuestra la ejecución de 4 análisis a partir de un directorio co
 >[!IMPORTANT]
 > El flujo de trabajo desplega un informe resumen en formato pdf pero este no elimina los output de los flujos de trabajo. Estos estarán disponibles la carpeta `work`
 
+> [!CAUTION]
+> El reporte final sólo es un resumen de los output finales que se obtuvieron durante el transcurso del pipeline. Se recomienda utilizar los reportes de cada proceso, en cada trabajo.
+
+
 # Configuración Avanzada:
 
 Para poder configurar, directorios de trabajo diferente, porfavor especificarlo dentro del [Configuración de Nextflow](nextflow.config)
@@ -337,10 +340,17 @@ La lista de todas las dependencias y requisitos de software.
 
 # Solución de Problemas:
 
-## Parámetro 
+> [!IMPORTANT]
+> El manejo de errores de cada proceso no está contralado.
 
-## Estructura del proyecto
+## Ensamble
+En el caso de las lecturas de entrada para el proceso de `spades`, si hay un problema en el índice, o lecturas de mala calidad el proceso fallará.
 
-## Contribuir
+## Anotación
+La ``--refannotation` para este parámetro no se realizan validaciones de formato.
 
-## Licencia 
+## Taxonomía
+La ruta de `--db` falla cuando no se entrega 
+
+# Licencia 
+Este proyecto está licenciado bajo [Licencia MIT]. 
