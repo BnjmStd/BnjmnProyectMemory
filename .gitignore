@@ -2,4 +2,5 @@ work/
 Ref/
 db/
 .nextflow
-src/mocks
+mocks/
+ref/
