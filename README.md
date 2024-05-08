@@ -139,6 +139,14 @@ Se puede usar el parámetro `--trimmo` & `--spades`, ejemplo de uso:
 
 ```
 
+Pero también se puede usar sólo el parámetro `--spades` junto a un directorio
+
+```bash
+    nextflow run script.nf --path [directorio] \
+        --spadesType
+        --spades
+```
+
 ## Análisis
 
 > [!TIP]
