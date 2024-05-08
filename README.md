@@ -176,6 +176,11 @@ Ejecutar análisis taxonomico junto a un preprocesamiento y ensamble:
 > [!NOTE] 
 > Recuerda que se puede descargar la base de datos que usted desee a través del comando `--dbdownload`
 
+```bash
+    nextflow run script.nf --dbdownload [ruta de la base de datos]
+```
+
+
 ### Identificación de ARG 
 
 Para realizar la identificación de genes de resistencia antibióticos se utiliza AMRFinder.
