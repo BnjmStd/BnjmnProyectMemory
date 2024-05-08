@@ -185,7 +185,7 @@ Ejecutar análisis taxonomico junto a un preprocesamiento y ensamble:
 
 Para realizar la identificación de genes de resistencia antibióticos se utiliza AMRFinder.
 
-- Para ejecutar un análsis de resistencia antibiótica junto a un preprocesamiento y ensamble: 
+- Para ejecutar un análisis de resistencia antibiótica junto a un preprocesamiento y ensamble: 
 
 ```bash
     nextflow run script.nf --path [directorio] \
@@ -265,6 +265,10 @@ Para realizar un llamado de variantes junto a un ensamble de bacterias ejecute:
 
 >[!IMPORTANT]
 > Si usted no tiene un genoma de referencia para su organismo, pero si presenta un código de ~/NC_\d{6}/ ejecute `--variantRefId`
+
+```bash 
+ nextflow run script.nf --variantRefId [ruta del genoma de referencia]
+```
 
 Para ejecutar un análisis rápido de llamado de variantes ejecute: 
 
