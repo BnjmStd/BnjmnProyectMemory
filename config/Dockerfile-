@@ -81,6 +81,9 @@ RUN wget https://github.com/ropensci/rentrez/archive/refs/heads/master.tar.gz &&
 
 RUN apt-get update && apt-get install -y autoconf
 
+RUN apt-get update && \
+    apt-get install -y git
+
 # Instala VCFtools desde el código fuente
 RUN git clone https://github.com/vcftools/vcftools.git && \
     cd vcftools && \
@@ -128,6 +131,46 @@ RUN apt install -y wget && \
 
 # Instalar el paquete libidn11
 RUN apt install -y ./libidn11_1.33-2.2ubuntu2_amd64.deb
+
+#############################################
+# Actualiza el sistema e instala dependencias
+RUN apt-get update && apt-get install -y \
+    bioperl \
+    ncbi-blast+ \
+    gzip \
+    unzip \
+    git \
+    libjson-perl \
+    libtext-csv-perl \
+    libpath-tiny-perl \
+    liblwp-protocol-https-perl \
+    libwww-perl \
+    cpanminus \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Instala Perl modules necesarios
+RUN cpanm LWP::Simple JSON Path::Tiny
+
+# Instala any2fasta
+RUN wget https://raw.githubusercontent.com/tseemann/any2fasta/master/any2fasta -O /usr/local/bin/any2fasta \
+    && chmod +x /usr/local/bin/any2fasta
+
+# Clona el repositorio de Abricate
+RUN git clone https://github.com/tseemann/abricate.git /abricate
+
+# Ejecuta los scripts de configuración de Abricate
+RUN /abricate/bin/abricate --check \
+    && /abricate/bin/abricate --setupdb
+
+# Establece el directorio de trabajo
+WORKDIR /abricate
+
+# Ejecuta un comando de prueba
+CMD ["/abricate/bin/abricate", "/abricate/test/assembly.fa"]
+
+# Añade Abricate al PATH
+RUN ln -s /abricate/bin/abricate /usr/local/bin/abricate
 
 # Establecer el directorio de trabajo
 WORKDIR /workspace

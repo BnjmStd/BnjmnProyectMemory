@@ -150,10 +150,23 @@ workflow {
             } else {
                 throw new Error ('something went wrong')
             }
-        } else if (params.trimmo == null) {
-            println ('hacer algo con params.path o files')
+        } else if (params.trimmo == null) && (params.spades != null) {
+            if ((params.spadesType != null)) {
+                if ((params.f != null)) {
+                    if ((params.spadesType.toLowerCase() == 'pe')) {
+                        throw new Error (' ~ error in the number of files')
+                    }
+                    else if ((params.spadesType.toLowerCase() == 'se')) {
+                        spades_result = SPADES_SE(file(params.f), params.phred_offset)
+                        flag_spades = REPORT_SPADES(spades_result)
+                    }
+                } 
+                else if ((params.path != null)) {
+                    throw new Error (' ~ TO DO: looking for job')
+                }
+            }
         } else {
-            throw new Error ('something went wrong')
+            throw new Error (' ~ something went wrong')
         }
     }
 
