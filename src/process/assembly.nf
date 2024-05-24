@@ -8,7 +8,7 @@ process SPADES_SE {
 
     script:
     """
-    spades.py -o output_spades -s $index $phred 
+    spades.py --careful -o output_spades -s $index $phred 
     """
 }
 
@@ -23,7 +23,7 @@ process SPADES_PE {
 
     script:
     """
-    spades.py -o output_spades -1 ${forward_reads} -2 ${reverse_reads} $phred_offset
+    spades.py --careful -o output_spades -1 ${forward_reads} -2 ${reverse_reads} $phred_offset
     """
 }
 

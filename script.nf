@@ -51,7 +51,7 @@ workflow {
         if (cantidadArchivos == 0 && params.id_sra == null) {
             throw new Error ('Faltan parámetros')
         } else if (cantidadArchivos == 0 && params.id_sra != null) {
-            initial_download_workflow()
+            channel_report = initial_download_workflow()
         } else if  (cantidadArchivos > 0 && params.id_sra != null) {
             throw new Error ('El directorio no está vacio ')
         } else if (cantidadArchivos > 0  && params.id_sra == null ) {
@@ -117,7 +117,7 @@ workflow {
 
         if (params.trimmo.toLowerCase() == 'se' ||  params.trimmo.toLowerCase() == 'pe') {
             if (cantidadArchivos % 2 == 0 && params.trimmo.toLowerCase() == 'pe') {
-                trimmo_result = TRIMMO_PE(files.collectFile().collate(2), threads, phred, trimlog, summary, illuminaAdapter, leading, trailing, slidingwindow, minlen, )
+                trimmo_result = TRIMMO_PE(files.collectFile().collate(2), threads, phred, trimlog, summary, illuminaAdapter, leading, trailing, slidingwindow, minlen)
                 flag_trimmomatic = REPORT_TRIMMOMATIC(trimmo_result)
             } else if (cantidadArchivos % 2 != 0 && params.trimmo.toLowerCase() == 'pe') {
                 throw new Error('The number of files does not facilitate the creation of libraries')
@@ -150,24 +150,7 @@ workflow {
             } else {
                 throw new Error ('something went wrong')
             }
-        } else if (params.trimmo == null) && (params.spades != null) {
-            if ((params.spadesType != null)) {
-                if ((params.f != null)) {
-                    if ((params.spadesType.toLowerCase() == 'pe')) {
-                        throw new Error (' ~ error in the number of files')
-                    }
-                    else if ((params.spadesType.toLowerCase() == 'se')) {
-                        spades_result = SPADES_SE(file(params.f), params.phred_offset)
-                        flag_spades = REPORT_SPADES(spades_result)
-                    }
-                } 
-                else if ((params.path != null)) {
-                    throw new Error (' ~ TO DO: looking for job')
-                }
-            }
-        } else {
-            throw new Error (' ~ something went wrong')
-        }
+        } 
     }
 
     /* variantCalling*/
@@ -213,12 +196,12 @@ workflow {
     }
 
     /* Identificación de ARG */
-    if ((params.arg != null) && (params.type != null) && (params.spades != null) && (flag == false)){
+    if ((params.arg != null) && (params.typedb != null) && (params.spades != null) && (flag == false)){
         spades_result
         fasta_ = spades_result.flatMap { it.listFiles() }.filter{ it.name == 'scaffolds.fasta' }
-        flag_arg = arg_workflow(params.organism, params.type, fasta_)
-    } else if ((params.arg != null) && (params.type == null)) {
-        throw new Error('The --type parameter is missing')
+        flag_arg = arg_workflow(params.typedb, fasta_)
+    } else if ((params.arg != null) && (params.typedb == null)) {
+        throw new Error('The --typedb parameter is missing')
     }
     
     /* 
@@ -260,8 +243,8 @@ workflow {
     }
     
     /* ARG */
-    if ((params.f != null) && (params.arg != null) && (params.type != null) && (flag == false)) {
-        flag_arg = arg_workflow(params.organism, params.type, file(params.f))
+    if ((params.f != null) && (params.arg != null) && (params.typedb != null) && (flag == false)) {
+        flag_arg = arg_workflow(params.typedb, file(params.f))
     }
 
     /* anotación */
@@ -486,7 +469,8 @@ workflow {
     }
 
     report_workflow(channel_report)
-}
+
+} 
 
 workflow.onComplete {
     log.info ( workflow.success ? ("\ndone!\n") : ("Oops ..") )
