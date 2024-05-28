@@ -4,13 +4,24 @@ include { REPORT_ANNOTATION } from "${params.procces_in_workflow}/annotation.nf"
 
 workflow annotation_workflow {
     take:
+    
     fasta
-    fasta_ref
+    db
+    type
 
     main:
-        x = BLASTN(fasta, file(fasta_ref))
-        result_annotation = REPORT_ANNOTATION(x)
 
+        if ((type == 'prot')) {
+            x = BLASTN(fasta, file(db))
+            result_annotation = REPORT_ANNOTATION(x)
+        } else if ((type == 'nucl')) {
+            x = BLASTP(fasta, file(db))
+            result_annotation = REPORT_ANNOTATION(x)
+        } else {
+            throw new Error ('~ error type')
+        }
+       
     emit:
+    
     result_annotation
 }

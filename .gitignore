@@ -1,6 +1,4 @@
 work/
-Ref/
-db/
 .nextflow
-mocks/
-ref/
+misc/
+report/

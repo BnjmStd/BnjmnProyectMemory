@@ -153,7 +153,7 @@ workflow {
         } 
     }
 
-    /* variantCalling*/
+    /* variantCalling */
     if ((params.variantCall != null) && (params.spades != null) && flag == false) {
         // ok si paso, valido la ref
         spades_result /* need it */
@@ -189,10 +189,10 @@ workflow {
     }
     
     /* anotación funcional */
-    if ((params.annotation != null) && (params.spades != null) && (flag == false)) {
+    if ((params.annotation != null) && (params.spades != null) && (params.annotation != null) && (params.annotationDb != null)&& (params.annotationType != null)&& (flag == false)) {
         spades_result  
         fasta = spades_result.flatMap { it.listFiles() }.filter{ it.name == 'scaffolds.fasta' }
-        flag_annotation = annotation_workflow(fasta, params.variantRef)
+        flag_annotation = annotation_workflow(file(fasta), params.annotationDb, params.annotationType)
     }
 
     /* Identificación de ARG */
@@ -200,6 +200,7 @@ workflow {
         spades_result
         fasta_ = spades_result.flatMap { it.listFiles() }.filter{ it.name == 'scaffolds.fasta' }
         flag_arg = arg_workflow(params.typedb, fasta_)
+
     } else if ((params.arg != null) && (params.typedb == null)) {
         throw new Error('The --typedb parameter is missing')
     }
@@ -248,8 +249,8 @@ workflow {
     }
 
     /* anotación */
-    if ((params.f != null) && (params.annotation != null) && (params.type != null) && (flag == false)) {
-        flag_annotation = annotation_workflow(params.f, params.f)
+    if ((params.f != null) && (params.annotation != null) && (params.annotationDb != null) && (params.annotationType != null) && (flag == false)) {
+        flag_annotation = annotation_workflow(file(params.f), params.annotationDb, params.annotationType)
     }
 
     /* 
