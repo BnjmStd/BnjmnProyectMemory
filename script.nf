@@ -29,7 +29,7 @@ include { annotation_workflow } from "${params.workflows}/annotation_workflow.nf
 include { report_workflow } from "${params.workflows}/report_workflow.nf"
 
 if (!nextflow.version.matches('>=23.0')) {
-    println "This workflow requires Nextflow version 20.04 or greater and you are running version $nextflow.version"
+    println "This workflow requires Nextflow version 23.04 or greater and you are running version $nextflow.version"
     exit 1
 }
 
