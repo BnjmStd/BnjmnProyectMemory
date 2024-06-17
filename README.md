@@ -74,7 +74,7 @@ Si el directorio está vacío y deseas comenzar a descargar archivos FastQ para 
 
 Por defecto, se descargarán 1000 lecturas, pero puedes cambiar este número utilizando el parámetro `--x`.
 
-Además, si la librería tiene el formato Layout: PAIRED, puedes usar `--paires` para descargar el par de archivos FastQ correspondientes.
+Además, si la librería tiene el formato Layout: PAIRED, puedes usar `--pairs` para descargar el par de archivos FastQ correspondientes.
 
 > [!WARNING]
 > Recuerde que para descargar se debe disponer de un ID SRR.

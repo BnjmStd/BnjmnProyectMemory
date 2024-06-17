@@ -3,7 +3,6 @@
 /* process */ 
 include { DOWNLOAD_DECOMPRESS_DBKRAKEN2 } from "${params.process}/downloadDBKraken2.nf"
 include { UNZIPFILE } from "${params.process}/decompress.nf"
-include { REPORT_ENDING } from "${params.process}/report.nf"
 /* Evaluación de calidad */
 include { TRIMMO_PE } from "${params.process}/preprocessing.nf"
 include { TRIMMO_SE } from "${params.process}/preprocessing.nf"
@@ -27,6 +26,11 @@ include { arg_workflow } from "${params.workflows}/arg_workflow.nf"
 include { variant_calling_workflow } from "${params.workflows}/variant_calling_workflow.nf"
 include { annotation_workflow } from "${params.workflows}/annotation_workflow.nf"
 include { report_workflow } from "${params.workflows}/report_workflow.nf"
+
+/* test report */
+
+include { REPORT_ENDING } from "${params.process}/report.nf"
+
 
 if (!nextflow.version.matches('>=23.0')) {
     println "This workflow requires Nextflow version 23.04 or greater and you are running version $nextflow.version"
@@ -77,7 +81,12 @@ workflow {
         }
 
     } else if (params.f != null && params.path == null) {
-        validar_fasta_services(params.f)
+        
+        if (params.f == true) {
+            throw new Error ('No ingreso un valor válido para --f')
+        } else {
+            validar_fasta_services(params.f)
+        }
 
     } else if (params.f != null && params.path != null) {
         throw new Error('Cant run --f and --path together')
@@ -252,7 +261,7 @@ workflow {
     if ((params.f != null) && (params.annotation != null) && (params.annotationDb != null) && (params.annotationType != null) && (flag == false)) {
         flag_annotation = annotation_workflow(file(params.f), params.annotationDb, params.annotationType)
     }
-
+    
     /* 
     ################################
     ################################
