@@ -205,53 +205,27 @@ Para realizar la identificación de genes de resistencia antibióticos se utiliz
         --minlen 36 \
         --spades \  
         --arg \
-        --organism Acinetobacter_baumannii \
-        --type p
+        --typedb [base de datos]
 ```
-> [!WARNING]
-> El `--organism` es opcional, se suele utilizar para una mayor eficacia.
 
-Para el parámetro `organism` se aceptan las siguientes opciones:
+Para el parámetro `typedb`, se aceptan las siguientes opciones:
 
-- "Acinetobacter_baumannii"
-- "Burkholderia_cepacia"
-- "Burkholderia_pseudomallei"
-- "Campylobacter"
-- "Citrobacter_freundii"
-- "Clostridioides_difficile"
-- "Enterobacter_asburiae"
-- "Enterobacter_cloacae"
-- "Enterococcus_faecalis"
-- "Enterococcus_faecium"
-- "Escherichia"
-- "Klebsiella_oxytoca"
-- "Klebsiella_pneumoniae"
-- "Neisseria_gonorrhoeae"
-- "Neisseria_meningitidis"
-- "Pseudomonas_aeruginosa"
-- "Salmonella"
-- "Serratia_marcescens"
-- "Staphylococcus_aureus"
-- "Staphylococcus_pseudintermedius"
-- "Streptococcus_agalactiae"
-- "Streptococcus_pneumoniae"
-- "Streptococcus_pyogenes"
-- "Vibrio_cholerae"
-- "Vibrio_parahaemolyticus"
-- "Vibrio_vulnificus"
-
-Para el parámetro `type`, se aceptan las siguientes opciones:
-
-- n: normal
-- p: pathogenic
+- "resfinder",
+- "argannot",
+- "ecoli_vg",
+- "megares",
+- "card",
+- "ncbi",
+- "ecoh",
+- "vfdb",
+- "plasmidfinder"
 
 Ejemplo de ejecución de un análisis de resistencia antibiótica a través de un archivo Fasta:
 
 ```bash
 nextflow run script.nf --f [archivo fasta] \
     --arg \
-    --organism Acinetobacter_baumannii \
-    --type p
+    --typedb [base de datos]
 ```
 
 ### Llamado de variantes
@@ -301,19 +275,27 @@ Para realizar una anotación funcional junto a un ensamble ejecute:
     --iluminaAdapter TruSeq3-PE.fa:2:30:10 \
     --spades \ 
     --annotation \
-    --refannotation
+    --annotationDb database.fa\
+    --annotationType prot
 ```
 
 >[!IMPORTANT]
-> `--annotation` es para indicarle al flujo de trabajo que desea realizar ese análisis pero, si no ingresa un `--refannotation` no se tendrá con qué anotar.
+> `--annotation` es para indicarle al flujo de trabajo que desea realizar ese análisis pero, si no ingresa un `--annotationDb` o `--annotationType` mandará error.
 
 Para ejecutar un análisis rápido de anotación funcional ejecute: 
 
 ```bash 
  nextflow run script.nf --f [fasta] \
     --annotation \
-    --refannotation
+    --annotationDb database.fa\
+    --annotationType prot
 ```
+
+Para el parámetro `--annotationType`, se aceptan las siguientes opciones:
+
+- "prot",
+- "nucle",
+
 
 ## Ejemplo de uso:
 
