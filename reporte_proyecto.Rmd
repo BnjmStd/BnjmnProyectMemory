@@ -1,0 +1,163 @@
+---
+title: "Reporte de Archivos de Texto"
+author: "Tu Nombre"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+# Reporte de Archivos de Texto
+
+
+## report_annotation.txt
+```{verbatim}
+Resumen GENERAL de anotaciones:
+El número de anotaciones finales es de: 0
+```
+
+
+## report_spades.txt
+```{verbatim}
+Command line: /usr/libexec/spades/spades.py	--careful	-o	/workspace/work/7d/ca90d7cb02d241f633da4588d8a6bb/output_spades	-1	/workspace/work/7d/ca90d7cb02d241f633da4588d8a6bb/_output_forward.fastq	-2	/workspace/work/7d/ca90d7cb02d241f633da4588d8a6bb/_output_reverse.fastq	
+
+System information:
+  SPAdes version: 3.15.5
+  Python version: 3.12.3
+  OS: Linux-5.15.146.1-microsoft-standard-WSL2-x86_64-with-glibc2.39
+
+Output dir: /workspace/work/7d/ca90d7cb02d241f633da4588d8a6bb/output_spades
+Mode: read error correction and assembling
+Debug mode is turned OFF
+
+Dataset parameters:
+  Standard mode
+  For multi-cell/isolate data we recommend to use '--isolate' option; for single-cell MDA data use '--sc'; for metagenomic data use '--meta'; for RNA-Seq use '--rna'.
+  Reads:
+    Library number: 1, library type: paired-end
+      orientation: fr
+      left reads: ['/workspace/work/7d/ca90d7cb02d241f633da4588d8a6bb/_output_forward.fastq']
+      right reads: ['/workspace/work/7d/ca90d7cb02d241f633da4588d8a6bb/_output_reverse.fastq']
+      interlaced reads: not specified
+      single reads: not specified
+      merged reads: not specified
+Read error correction parameters:
+  Iterations: 1
+  PHRED offset will be auto-detected
+  Corrected reads will be compressed
+Assembly parameters:
+  k: automatic selection based on read length
+  Repeat resolution is enabled
+  Mismatch careful mode is turned ON
+  MismatchCorrector will be used
+  Coverage cutoff is turned OFF
+Other parameters:
+  Dir for temp files: /workspace/work/7d/ca90d7cb02d241f633da4588d8a6bb/output_spades/tmp
+  Threads: 16
+  Memory limit (in Gb): 6
+
+
+
+=== Error correction and assembling warnings:
+ * 0:00:01.341     1M / 1297M WARN    General                 (kmer_coverage_model.cpp   : 366)   Failed to determine erroneous kmer threshold. Threshold set to: 5
+ * 0:00:01.514     1M / 1297M WARN    General                 (simplification.cpp        : 504)   The determined erroneous connection coverage threshold may be determined improperly
+ * 0:00:00.875     1M / 1319M WARN    General                 (kmer_coverage_model.cpp   : 366)   Failed to determine erroneous kmer threshold. Threshold set to: 4
+======= Warnings saved to /workspace/work/7d/ca90d7cb02d241f633da4588d8a6bb/output_spades/warnings.log
+```
+
+
+## report_taxonomy.txt
+```{verbatim}
+ 94.87	37	37	U	0	unclassified
+  5.13	2	0		1	root
+  5.13	2	0		10239	  Viruses
+  5.13	2	0	1	2731341	    Duplodnaviria
+  5.13	2	0	K	2731360	      Heunggongvirae
+  5.13	2	0	P	2731618	        Uroviricota
+  5.13	2	0	C	2731619	          Caudoviricetes
+  2.56	1	0	F	2946167	            Peduoviridae
+  2.56	1	0	G	2948951	              Wadgaonvirus
+  2.56	1	0	S	2956672	                Wadgaonvirus wv5004651
+  2.56	1	1	S1	2716351	                  Escherichia phage 500465-1
+  2.56	1	0	G	2843442	            Radostvirus
+  2.56	1	0	S	2844247	              Radostvirus ev099
+  2.56	1	1	S1	2847061	                Escherichia phage ev099
+```
+
+
+## report_trimmomatic.txt
+```{verbatim}
+Input Read Pairs: 500
+Both Surviving Reads: 499
+Both Surviving Read Percent: 99.80
+Forward Only Surviving Reads: 0
+Forward Only Surviving Read Percent: 0.00
+Reverse Only Surviving Reads: 0
+Reverse Only Surviving Read Percent: 0.00
+Dropped Reads: 1
+Dropped Read Percent: 0.20
+```
+
+
+## report_variant_calling.txt
+```{verbatim}
+# This file was produced by bcftools stats (1.19+htslib-1.19) and can be plotted using plot-vcfstats.
+# The command line was:	bcftools stats  SNPs_only.recode.vcf
+#
+# Definition of sets:
+# ID	[2]id	[3]tab-separated file names
+ID	0	SNPs_only.recode.vcf
+# SN, Summary numbers:
+#   number of records   .. number of data rows in the VCF
+#   number of no-ALTs   .. reference-only sites, ALT is either "." or identical to REF
+#   number of SNPs      .. number of rows with a SNP
+#   number of MNPs      .. number of rows with a MNP, such as CC>TT
+#   number of indels    .. number of rows with an indel
+#   number of others    .. number of rows with other type, for example a symbolic allele or
+#                          a complex substitution, such as ACT>TCGA
+#   number of multiallelic sites     .. number of rows with multiple alternate alleles
+#   number of multiallelic SNP sites .. number of rows with multiple alternate alleles, all SNPs
+# 
+#   Note that rows containing multiple types will be counted multiple times, in each
+#   counter. For example, a row with a SNP and an indel increments both the SNP and
+#   the indel counter.
+# 
+# SN	[2]id	[3]key	[4]value
+SN	0	number of samples:	1
+SN	0	number of records:	90
+SN	0	number of no-ALTs:	0
+SN	0	number of SNPs:	90
+SN	0	number of MNPs:	0
+SN	0	number of indels:	0
+SN	0	number of others:	0
+SN	0	number of multiallelic sites:	0
+SN	0	number of multiallelic SNP sites:	0
+# TSTV, transitions/transversions:
+# TSTV	[2]id	[3]ts	[4]tv	[5]ts/tv	[6]ts (1st ALT)	[7]tv (1st ALT)	[8]ts/tv (1st ALT)
+TSTV	0	61	29	2.10	61	29	2.10
+# SiS, Singleton stats:
+# SiS	[2]id	[3]allele count	[4]number of SNPs	[5]number of transitions	[6]number of transversions	[7]number of indels	[8]repeat-consistent	[9]repeat-inconsistent	[10]not applicable
+SiS	0	1	90	61	29	0	0	0	0
+# AF, Stats by non-reference allele frequency:
+# AF	[2]id	[3]allele frequency	[4]number of SNPs	[5]number of transitions	[6]number of transversions	[7]number of indels	[8]repeat-consistent	[9]repeat-inconsistent	[10]not applicable
+AF	0	0.000000	90	61	29	0	0	0	0
+# QUAL, Stats by quality
+# QUAL	[2]id	[3]Quality	[4]number of SNPs	[5]number of transitions (1st ALT)	[6]number of transversions (1st ALT)	[7]number of indels
+QUAL	0	30.4	90	61	29	0
+# IDD, InDel distribution:
+# IDD	[2]id	[3]length (deletions negative)	[4]number of sites	[5]number of genotypes	[6]mean VAF
+# ST, Substitution types:
+# ST	[2]id	[3]type	[4]count
+ST	0	A>C	9
+ST	0	A>G	13
+ST	0	A>T	4
+ST	0	C>A	1
+ST	0	C>G	2
+ST	0	C>T	17
+ST	0	G>A	13
+ST	0	G>C	2
+ST	0	G>T	2
+ST	0	T>A	6
+ST	0	T>C	18
+ST	0	T>G	3
+# DP, Depth distribution
+# DP	[2]id	[3]bin	[4]number of genotypes	[5]fraction of genotypes (%)	[6]number of sites	[7]fraction of sites (%)
+```
